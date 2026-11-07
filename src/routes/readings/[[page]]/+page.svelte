@@ -1,12 +1,22 @@
 <script lang="ts">
 	import Seo from '#lib/components/seo.svelte';
-	import { Button } from '#lib/components/ui/button';
-	import { Card, CardContent } from '#lib/components/ui/card';
+	import Pagination from '#lib/components/pagination.svelte';
+	import StatTile from '#lib/components/stat-tile.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const pageUrl = (p: number) => `/readings/${p}`;
+
+	const summaryTiles = $derived(
+		data.summary
+			? [
+					{ label: '已读书籍', value: data.summary.books_read.toLocaleString() },
+					{ label: '读书笔记', value: data.summary.reviews_written.toLocaleString() },
+					{ label: '读书天数', value: data.summary.reading_period.total_days.toLocaleString() }
+				]
+			: []
+	);
 </script>
 
 <Seo title="读书" description="任氏有无轩读书统计与书评。" />
@@ -15,30 +25,13 @@
 
 {#if data.summary}
 	<div class="mt-6 grid grid-cols-3 gap-4 text-center">
-		<Card class="gap-0 py-4">
-			<CardContent class="px-4">
-				<div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-					{data.summary.books_read.toLocaleString()}
-				</div>
-				<div class="text-muted-foreground mt-1 text-sm">已读书籍</div>
-			</CardContent>
-		</Card>
-		<Card class="gap-0 py-4">
-			<CardContent class="px-4">
-				<div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-					{data.summary.reviews_written.toLocaleString()}
-				</div>
-				<div class="text-muted-foreground mt-1 text-sm">读书笔记</div>
-			</CardContent>
-		</Card>
-		<Card class="gap-0 py-4">
-			<CardContent class="px-4">
-				<div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-					{data.summary.reading_period.total_days.toLocaleString()}
-				</div>
-				<div class="text-muted-foreground mt-1 text-sm">读书天数</div>
-			</CardContent>
-		</Card>
+		{#each summaryTiles as tile (tile.label)}
+			<StatTile
+				value={tile.value}
+				label={tile.label}
+				valueClass="text-emerald-600 dark:text-emerald-400"
+			/>
+		{/each}
 	</div>
 	<p class="text-muted-foreground mt-2 text-center text-xs">
 		统计区间：{data.summary.reading_period.earliest_date} ~ {data.summary.reading_period
@@ -64,25 +57,7 @@
 		{/each}
 	</div>
 
-	{#if data.pagination.total_pages > 1}
-		<div class="mt-10 flex items-center justify-center gap-2">
-			<Button
-				variant="outline"
-				size="sm"
-				disabled={data.pagination.current_page <= 1}
-				href={pageUrl(data.pagination.current_page - 1)}>上一页</Button
-			>
-			<span class="text-muted-foreground px-2 text-sm">
-				{data.pagination.current_page} / {data.pagination.total_pages}
-			</span>
-			<Button
-				variant="outline"
-				size="sm"
-				disabled={data.pagination.current_page >= data.pagination.total_pages}
-				href={pageUrl(data.pagination.current_page + 1)}>下一页</Button
-			>
-		</div>
-	{/if}
+	<Pagination pagination={data.pagination} hrefFor={pageUrl} />
 {:else}
 	<p class="text-muted-foreground mt-10 text-center">暂无书评。</p>
 {/if}

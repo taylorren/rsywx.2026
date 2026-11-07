@@ -2,6 +2,9 @@
 	import Seo from '#lib/components/seo.svelte';
 	import SectionHeading from '#lib/components/section-heading.svelte';
 	import BookCard from '#lib/components/book-card.svelte';
+	import Hero from '#lib/components/hero.svelte';
+	import ReadingItem from '#lib/components/reading-item.svelte';
+	import StatTile from '#lib/components/stat-tile.svelte';
 	import { Card, CardContent, CardHeader, CardTitle } from '#lib/components/ui/card';
 	import type { PageProps } from './$types';
 
@@ -22,15 +25,25 @@
 				]
 			: []
 	);
+
+	const readingTiles = $derived(
+		data.readingSummary.data
+			? [
+					{ label: '已读书籍', value: data.readingSummary.data.books_read.toLocaleString() },
+					{ label: '读书笔记', value: data.readingSummary.data.reviews_written.toLocaleString() },
+					{
+						label: '读书天数',
+						value: data.readingSummary.data.reading_period.total_days.toLocaleString()
+					}
+				]
+			: []
+	);
 </script>
 
 <Seo title="首页" description="任氏有无轩 - 个人数字图书馆，收录藏书、读书笔记、博客文章等内容" />
 
 <!-- Hero -->
-<section class="text-center">
-	<h1 class="text-4xl font-bold tracking-tight sm:text-5xl">任氏有无轩欢迎您！</h1>
-	<p class="text-muted-foreground mt-4 text-lg">藏书 · 读书 · 博客 · 维客 · 资源</p>
-</section>
+<Hero />
 
 <!-- 藏书 -->
 <section class="mt-20">
@@ -39,12 +52,7 @@
 	{#if statTiles.length}
 		<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
 			{#each statTiles as tile (tile.label)}
-				<Card class="gap-0 py-4 text-center">
-					<CardContent class="px-4">
-						<div class="text-3xl font-bold text-amber-600 dark:text-amber-400">{tile.value}</div>
-						<div class="text-muted-foreground mt-1 text-sm">{tile.label}</div>
-					</CardContent>
-				</Card>
+				<StatTile value={tile.value} label={tile.label} />
 			{/each}
 		</div>
 	{:else}
@@ -111,32 +119,15 @@
 <section class="mt-20">
 	<SectionHeading title="读书" barClass="from-emerald-400 to-emerald-600" />
 
-	{#if data.readingSummary.data}
+	{#if readingTiles.length}
 		<div class="grid grid-cols-3 gap-4 text-center">
-			<Card class="gap-0 py-4">
-				<CardContent class="px-4">
-					<div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-						{data.readingSummary.data.books_read.toLocaleString()}
-					</div>
-					<div class="text-muted-foreground mt-1 text-sm">已读书籍</div>
-				</CardContent>
-			</Card>
-			<Card class="gap-0 py-4">
-				<CardContent class="px-4">
-					<div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-						{data.readingSummary.data.reviews_written.toLocaleString()}
-					</div>
-					<div class="text-muted-foreground mt-1 text-sm">读书笔记</div>
-				</CardContent>
-			</Card>
-			<Card class="gap-0 py-4">
-				<CardContent class="px-4">
-					<div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-						{data.readingSummary.data.reading_period.total_days.toLocaleString()}
-					</div>
-					<div class="text-muted-foreground mt-1 text-sm">读书天数</div>
-				</CardContent>
-			</Card>
+			{#each readingTiles as tile (tile.label)}
+				<StatTile
+					value={tile.value}
+					label={tile.label}
+					valueClass="text-emerald-600 dark:text-emerald-400"
+				/>
+			{/each}
 		</div>
 	{:else}
 		<p class="text-muted-foreground text-center text-sm">
@@ -150,25 +141,7 @@
 			<CardContent class="space-y-4">
 				{#if data.latestReading.data?.length}
 					{#each data.latestReading.data as item (item.uri)}
-						<a
-							href={item.uri}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="flex gap-3 hover:opacity-80"
-						>
-							{#if item.feature}
-								<img
-									src={item.feature}
-									alt={item.title}
-									loading="lazy"
-									class="h-16 w-12 rounded object-cover"
-								/>
-							{/if}
-							<div class="min-w-0">
-								<div class="line-clamp-1 font-medium">{item.title}</div>
-								<div class="text-muted-foreground text-sm">{item.datein} · {item.book_title}</div>
-							</div>
-						</a>
+						<ReadingItem {item} />
 					{/each}
 				{:else}
 					<p class="text-muted-foreground text-sm">{data.latestReading.error ?? '暂无数据'}</p>
@@ -181,25 +154,7 @@
 			<CardContent class="space-y-4">
 				{#if data.reviews.data?.length}
 					{#each data.reviews.data as item (item.uri)}
-						<a
-							href={item.uri}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="flex gap-3 hover:opacity-80"
-						>
-							{#if item.feature}
-								<img
-									src={item.feature}
-									alt={item.title}
-									loading="lazy"
-									class="h-16 w-12 rounded object-cover"
-								/>
-							{/if}
-							<div class="min-w-0">
-								<div class="line-clamp-1 font-medium">{item.title}</div>
-								<div class="text-muted-foreground text-sm">{item.datein} · {item.book_title}</div>
-							</div>
-						</a>
+						<ReadingItem {item} />
 					{/each}
 				{:else}
 					<p class="text-muted-foreground text-sm">{data.reviews.error ?? '暂无数据'}</p>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Menu, Search, X } from '@lucide/svelte';
+	import { ExternalLink, Menu, Search, X } from '@lucide/svelte';
 	import { afterNavigate } from '$app/navigation';
 	import ThemeToggle from '#lib/components/theme-toggle.svelte';
 	import { siteConfig } from '#lib/config/site';
@@ -49,16 +49,22 @@
 				href={siteConfig.links.blog}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 text-sm font-medium transition-colors"
-				>博客</a
+				title="在新窗口打开"
+				class="hover:bg-accent hover:text-accent-foreground inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors"
 			>
+				博客
+				<ExternalLink class="size-3.5 opacity-70" aria-hidden="true" />
+			</a>
 			<a
 				href={siteConfig.links.wiki}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 text-sm font-medium transition-colors"
-				>维客</a
+				title="在新窗口打开"
+				class="hover:bg-accent hover:text-accent-foreground inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors"
 			>
+				维客
+				<ExternalLink class="size-3.5 opacity-70" aria-hidden="true" />
+			</a>
 		</div>
 
 		<div class="flex items-center gap-2">
@@ -101,14 +107,22 @@
 					href={siteConfig.links.blog}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="hover:bg-accent block rounded-md px-3 py-2 text-base font-medium">博客</a
+					title="在新窗口打开"
+					class="hover:bg-accent flex items-center gap-1.5 rounded-md px-3 py-2 text-base font-medium"
 				>
+					博客
+					<ExternalLink class="size-4 opacity-70" aria-hidden="true" />
+				</a>
 				<a
 					href={siteConfig.links.wiki}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="hover:bg-accent block rounded-md px-3 py-2 text-base font-medium">维客</a
+					title="在新窗口打开"
+					class="hover:bg-accent flex items-center gap-1.5 rounded-md px-3 py-2 text-base font-medium"
 				>
+					维客
+					<ExternalLink class="size-4 opacity-70" aria-hidden="true" />
+				</a>
 			</div>
 		</div>
 	{/if}

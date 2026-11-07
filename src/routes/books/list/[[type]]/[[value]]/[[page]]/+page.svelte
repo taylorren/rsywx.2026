@@ -2,6 +2,7 @@
 	import { untrack } from 'svelte';
 	import Seo from '#lib/components/seo.svelte';
 	import BookCard from '#lib/components/book-card.svelte';
+	import Pagination from '#lib/components/pagination.svelte';
 	import { Button } from '#lib/components/ui/button';
 	import type { PageProps } from './$types';
 
@@ -71,29 +72,7 @@
 		{/each}
 	</div>
 
-	{#if data.pagination.total_pages > 1}
-		<div class="mt-10 flex items-center justify-center gap-2">
-			<Button
-				variant="outline"
-				size="sm"
-				disabled={data.pagination.current_page <= 1}
-				href={pageUrl(data.pagination.current_page - 1)}
-			>
-				上一页
-			</Button>
-			<span class="text-muted-foreground px-2 text-sm">
-				{data.pagination.current_page} / {data.pagination.total_pages}
-			</span>
-			<Button
-				variant="outline"
-				size="sm"
-				disabled={data.pagination.current_page >= data.pagination.total_pages}
-				href={pageUrl(data.pagination.current_page + 1)}
-			>
-				下一页
-			</Button>
-		</div>
-	{/if}
+	<Pagination pagination={data.pagination} hrefFor={pageUrl} />
 {:else}
 	<p class="text-muted-foreground mt-10 text-center">没有找到符合条件的藏书。</p>
 {/if}
