@@ -58,7 +58,7 @@
 </script>
 
 <div class="space-y-6">
-	<Box head="每日一词" meta={currentWord?.type ?? undefined}>
+	<Box head="每日一词">
 		{#snippet action()}
 			<button
 				type="button"
@@ -69,12 +69,12 @@
 				title="换一个词"
 			>
 				<RefreshCw class={cn('size-3', wordBusy && 'animate-spin')} aria-hidden="true" />
-				换
 			</button>
 		{/snippet}
 
 		{#if currentWord}
 			<p class="font-display text-2xl font-bold">{currentWord.word}</p>
+			<p class="text-ink-faint mt-0.5 font-mono text-xs italic">{currentWord.type}</p>
 			<p class="mt-1.5 text-sm">{currentWord.meaning}</p>
 			{#if currentWord.sentence}
 				<p class="text-ink-soft border-rule mt-2 border-l-2 pl-2.5 text-xs leading-relaxed italic">
@@ -100,7 +100,6 @@
 				title="换一句"
 			>
 				<RefreshCw class={cn('size-3', quoteBusy && 'animate-spin')} aria-hidden="true" />
-				换
 			</button>
 		{/snippet}
 
