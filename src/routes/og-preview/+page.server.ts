@@ -52,7 +52,15 @@ function readMeta(html: string): OgTag[] {
 	return tags;
 }
 
-export const load: PageServerLoad = async ({ url, fetch }): Promise<{ audit: OgAudit }> => {
+export const load: PageServerLoad = async ({
+	url,
+	fetch,
+	setHeaders
+}): Promise<{ audit: OgAudit }> => {
+	// A debugging view: it must never be cached, or a fixed card would still look
+	// broken in a browser that kept the old render.
+	setHeaders({ 'cache-control': 'no-store' });
+
 	const raw = url.searchParams.get('url')?.trim() || DEFAULT_PATH;
 
 	// Accept a pasted live URL (`https://rsywx.net/books/00001.html`) as well as a
