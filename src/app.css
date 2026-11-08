@@ -32,7 +32,7 @@
 	--rule-strong: oklch(0.52 0.016 80);
 	--spot: oklch(0.5 0.146 32);
 	--spot-soft: oklch(0.935 0.028 45);
-	--halftone-dot: oklch(0.216 0.014 75 / 45%);
+	--plate-dot: oklch(0.216 0.014 75 / 45%);
 
 	/* shadcn-svelte tokens, remapped onto the newsprint palette so the
 	   vendored Button / Card inherit the look for free. */
@@ -76,7 +76,7 @@
 	--rule-strong: oklch(0.52 0.013 86);
 	--spot: oklch(0.665 0.148 32);
 	--spot-soft: oklch(0.28 0.05 40);
-	--halftone-dot: oklch(0.928 0.012 92 / 30%);
+	--plate-dot: oklch(0.928 0.012 92 / 30%);
 	--destructive: oklch(0.68 0.19 25);
 }
 
@@ -182,26 +182,30 @@
 		text-transform: uppercase;
 	}
 
-	/* Front-page plate: greyscale + halftone dot screen. Applied to a wrapper,
-	   because a replaced element such as <img> cannot take pseudo-elements. */
-	.halftone {
+	/* Front-page plate — the single colour moment on an otherwise monochrome
+	   page (the "red coat" of the broadsheet). The photograph prints in colour
+	   on the newsprint: a touch muted, with a whisper of the dot screen.
+	   Applied to a wrapper, because <img> cannot take pseudo-elements. */
+	.plate {
 		position: relative;
 		overflow: hidden;
 		background-color: var(--ink);
 	}
-	.halftone > img {
-		filter: grayscale(1) contrast(1.22) brightness(1.04);
+	.plate > img {
+		filter: saturate(0.94) contrast(1.05);
 	}
-	.halftone::after {
+	.plate::after {
 		content: '';
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		background-image: radial-gradient(circle at 1px 1px, var(--halftone-dot) 1px, transparent 0);
-		background-size: 3px 3px;
+		background-image: radial-gradient(circle at 1px 1px, var(--plate-dot) 1px, transparent 0);
+		background-size: 4px 4px;
+		opacity: 0.3;
 		mix-blend-mode: multiply;
 	}
-	.dark .halftone::after {
+	.dark .plate::after {
+		opacity: 0.22;
 		mix-blend-mode: screen;
 	}
 
