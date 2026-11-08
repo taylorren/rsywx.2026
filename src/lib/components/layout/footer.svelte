@@ -9,7 +9,7 @@
 		{ file: 'tr.webp', alt: 'TR', title: 'TR the Father', caption: '父' },
 		{ file: 'gr.webp', alt: 'GR', title: 'GR the Mother', caption: '母' },
 		{ file: 'pr.webp', alt: 'PR', title: 'PR the Son', caption: '子' },
-		{ file: 'rt.webp', alt: 'RT', title: 'Rafael the Tortoise', caption: '龟' }
+		{ file: 'rt.webp', alt: 'RT', title: 'Rafael the Tortoise', caption: '宠' }
 	];
 </script>
 
