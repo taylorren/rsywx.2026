@@ -5,7 +5,7 @@
 	import Pagination from '#lib/components/pagination.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import { Button } from '#lib/components/ui/button';
-	import { bookByline, cn, formatInt } from '#lib/utils';
+	import { authorSearchUrl, cn, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -95,29 +95,33 @@
 
 	<ul>
 		{#each data.books as book (book.bookid)}
-			<li>
-				<a
-					href={`/books/${book.bookid}`}
-					class="group hover:bg-accent/40 border-rule flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-b py-2.5 transition-colors"
-					title={`${book.title} · ${book.author}`}
-				>
+			<li class="group hover:bg-accent/40 border-rule border-b transition-colors">
+				<div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2.5">
 					<span class="text-ink-faint order-1 w-12 shrink-0 font-mono text-xs tabular-nums">
 						{book.bookid}
 					</span>
-					<span
+					<!-- The title carries the row's link; the author gets its own,
+					     which runs an author search rather than opening the book. -->
+					<a
+						href={`/books/${book.bookid}`}
 						class="font-display group-hover:text-spot order-2 min-w-0 flex-1 text-[0.9375rem] leading-snug font-semibold transition-colors"
+						title={book.title}
 					>
 						{book.title}
-					</span>
+					</a>
 					<span class="text-ink-faint order-3 shrink-0 font-mono text-xs sm:order-4">
 						{book.location || '—'}
 					</span>
 					<span
 						class="text-ink-soft order-4 w-full truncate text-xs sm:order-3 sm:w-64 sm:shrink-0"
 					>
-						{bookByline(book)}
+						【{book.region}】<a
+							href={authorSearchUrl(book.author)}
+							class="hover:text-spot hover:underline"
+							title={`检索 ${book.author} 的全部藏书`}>{book.author}</a
+						>{#if book.copyrighter}<span class="text-ink-faint"> | </span>{book.copyrighter}{/if}
 					</span>
-				</a>
+				</div>
 			</li>
 		{/each}
 	</ul>

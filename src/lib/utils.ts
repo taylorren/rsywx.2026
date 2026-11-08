@@ -27,6 +27,11 @@ export function bookByline(book: Pick<BookListItem, 'region' | 'author' | 'copyr
 	return `【${book.region}】${book.author}${book.copyrighter ? ` | ${book.copyrighter}` : ''}`;
 }
 
+/** Catalogue search for one name — what an author or translator click should do. */
+export function authorSearchUrl(name: string): string {
+	return `/books/list/author/${encodeURIComponent(name)}/1`;
+}
+
 /**
  * Relative age from an ISO date, e.g. "3天前" / "2个月前" / "1年前".
  * Falls back to the raw string if it can't be parsed.
