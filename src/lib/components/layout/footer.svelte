@@ -3,8 +3,8 @@
 
 	const year = new Date().getFullYear();
 
-	// The household, as printed in the colophon: portraits stay monochrome until
-	// the eye falls on them, like every other plate in the paper.
+	// The household, as printed in the colophon. Unlike the book plates, these
+	// stay in full colour: they are the people, not the stock.
 	const family = [
 		{ file: 'tr.webp', alt: 'TR', title: 'TR the Father', caption: '父' },
 		{ file: 'gr.webp', alt: 'GR', title: 'GR the Mother', caption: '母' },
@@ -84,7 +84,7 @@
 								title={member.title}
 								loading="lazy"
 								decoding="async"
-								class="border-rule h-16 w-16 border object-cover grayscale transition duration-300 hover:grayscale-0"
+								class="border-rule h-16 w-16 border object-cover"
 							/>
 							<figcaption class="text-ink-faint mt-1 text-center font-mono text-[0.625rem]">
 								{member.caption}
