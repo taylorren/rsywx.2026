@@ -4,7 +4,7 @@
 	import Masthead from '#lib/components/layout/masthead.svelte';
 	import Box from '#lib/components/paper/box.svelte';
 	import SectionHead from '#lib/components/paper/section-head.svelte';
-	import Classifieds from '#lib/components/home/classifieds.svelte';
+	import LuckyShelf from '#lib/components/home/lucky-shelf.svelte';
 	import DailyBoxes from '#lib/components/home/daily-boxes.svelte';
 	import LibraryLedger from '#lib/components/home/library-ledger.svelte';
 	import NewsBriefs from '#lib/components/home/news-briefs.svelte';
@@ -52,8 +52,13 @@
 
 <Masthead dateline={data.dateline} stats={data.status.data} />
 
+<!-- The showcase window sits directly under the nameplate, above the fold. -->
+<section class="mt-8">
+	<LuckyShelf books={data.random.data ?? []} error={data.random.error} exclude={featuredBookIds} />
+</section>
+
 <!-- Front page: lead column beside a ruled right-hand rail. -->
-<div class="mt-8 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-12">
+<div class="mt-12 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-12">
 	<div class="lg:col-span-8">
 		<FrontPhoto plate={data.plate} />
 
@@ -114,7 +119,3 @@
 		/>
 	</aside>
 </div>
-
-<section class="mt-12">
-	<Classifieds books={data.random.data ?? []} error={data.random.error} exclude={featuredBookIds} />
-</section>

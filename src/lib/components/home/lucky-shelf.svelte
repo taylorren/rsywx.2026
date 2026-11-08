@@ -49,10 +49,16 @@
 </script>
 
 <!--
-  手气不错 as a column of classified notices: catalogue number, title, author,
-  shelf mark and hit count — the fields a card catalogue actually carries.
+  手气不错 as a showcase window set directly under the nameplate: one row of
+  covers, greyscale until the eye lands on one. The re-roll draws a fresh
+  batch from the shelf.
 -->
-<SectionHead kicker="藏书" title="手气不错" meta={`随机 ${items.length} 则`} heavy>
+<SectionHead
+	kicker="藏书 · 橱窗"
+	title="手气不错"
+	meta={`随机 ${items.length} 册 · 悬停显色`}
+	heavy
+>
 	{#snippet action()}
 		<button
 			type="button"
@@ -67,51 +73,34 @@
 </SectionHead>
 
 {#if items.length}
-	<table class="w-full border-collapse text-sm">
-		<thead>
-			<tr class="border-rule-strong text-ink-faint border-b text-left font-mono text-[0.6875rem]">
-				<th class="py-1.5 pr-3 font-normal">编号</th>
-				<th class="py-1.5 pr-3 font-normal">书名</th>
-				<th class="hidden py-1.5 pr-3 font-normal sm:table-cell">著者</th>
-				<th class="py-1.5 pr-3 text-right font-normal">架位</th>
-				<th class="hidden py-1.5 text-right font-normal md:table-cell">访问</th>
-			</tr>
-		</thead>
-		<tbody class="divide-rule divide-y">
-			{#each items as book (book.bookid)}
-				<tr class="hover:bg-accent/50 group transition-colors">
-					<td class="text-ink-faint py-2 pr-3 align-top font-mono text-xs">{book.bookid}</td>
-					<td class="py-2 pr-3 align-top">
-						<a
-							href={`/books/${book.bookid}`}
-							class="group-hover:text-spot flex items-start gap-2 font-medium transition-colors"
-							title={`${book.title} · ${book.author}`}
-						>
-							<img
-								src={coverUrl(book.bookid)}
-								alt=""
-								loading="lazy"
-								decoding="async"
-								class="border-rule h-9 w-7 shrink-0 border object-cover grayscale transition group-hover:grayscale-0"
-							/>
-							<span class="min-w-0">{book.title}</span>
-						</a>
-					</td>
-					<td class="text-ink-soft hidden py-2 pr-3 align-top text-xs sm:table-cell">
-						{bookByline(book)}
-					</td>
-					<td class="text-ink-faint py-2 pr-3 text-right align-top font-mono text-xs">
-						{book.location || '—'}
-					</td>
-					<td
-						class="text-ink-faint hidden py-2 text-right align-top font-mono text-xs tabular-nums md:table-cell"
+	<ul class="grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 lg:grid-cols-6">
+		{#each items as book (book.bookid)}
+			<li>
+				<a href={`/books/${book.bookid}`} class="group block">
+					<img
+						src={coverUrl(book.bookid)}
+						alt=""
+						loading="lazy"
+						decoding="async"
+						class="border-rule aspect-3/4 w-full border object-cover grayscale transition duration-300 group-hover:grayscale-0"
+					/>
+					<span
+						class="font-display group-hover:text-spot mt-2 line-clamp-2 block text-sm leading-snug font-semibold transition-colors"
 					>
-						{book.total_visits != null ? formatInt(book.total_visits) : '—'}
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
+						{book.title}
+					</span>
+					<span class="text-ink-faint mt-0.5 line-clamp-1 block font-mono text-[0.6875rem]">
+						{bookByline(book)}
+					</span>
+					<span class="text-ink-faint block font-mono text-[0.6875rem] tabular-nums">
+						{book.location || '—'}
+						{#if book.total_visits != null}
+							· {formatInt(book.total_visits)} 次{/if}
+					</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
 
 	<div class="border-rule mt-4 flex items-center justify-between gap-4 border-t pt-3">
 		{#if failure}<p class="text-spot text-xs">{failure}</p>{/if}
