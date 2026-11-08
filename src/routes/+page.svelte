@@ -25,17 +25,15 @@
 	const reviewsWritten = $derived(data.readingSummary.data?.reviews_written);
 	const todayCount = $derived(data.blogs.data?.length ?? 0);
 
-	// The latest eight notes, printed in two index blocks: the 3 newest, then
-	// the next 5. Sorted explicitly by publish date so the printed order never
-	// depends on whatever order the upstream API returns.
+	// The latest eight notes, printed in one block: the newest sets the lead,
+	// the rest line up in the 其他书评 index. Sorted explicitly by publish date
+	// so the printed order never depends on whatever the upstream API returns.
 	const sortedReadings = $derived([...(data.latestReading.data ?? [])].sort(byReviewDateDesc));
-	const latestReviews = $derived(sortedReadings.slice(0, 3));
-	const moreReviews = $derived(sortedReadings.slice(3, 8));
 
 	// When nothing was published on this day in years past, the newest reading
-	// note is promoted to the lead — and then dropped from the index below it.
-	const leadReading = $derived(todayCount > 0 ? null : (latestReviews[0] ?? null));
-	const reviewIndex = $derived(leadReading ? latestReviews.slice(1) : latestReviews);
+	// note is promoted to the lead — and then dropped from the block below it.
+	const leadReading = $derived(todayCount > 0 ? null : (sortedReadings[0] ?? null));
+	const reviewIndex = $derived(leadReading ? sortedReadings.slice(1) : sortedReadings);
 </script>
 
 <Seo title="首页" description="任氏有无轩 - 个人数字图书馆，收录藏书、读书笔记、博客文章等内容" />
@@ -77,13 +75,6 @@
 				<a href="/readings" class="text-spot font-mono text-xs hover:underline">全部读书笔记 →</a>
 			</div>
 		</section>
-
-		{#if moreReviews.length}
-			<section class="mt-10">
-				<SectionHead kicker="读书" title="再续书评" meta="第 4–8 篇" />
-				<ReviewColumn readings={moreReviews} error={data.latestReading.error} />
-			</section>
-		{/if}
 	</div>
 
 	<aside class="border-rule space-y-6 lg:col-span-4 lg:border-l lg:pl-10">
