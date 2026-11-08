@@ -53,12 +53,7 @@
   covers, greyscale until the eye lands on one. The re-roll draws a fresh
   batch from the shelf.
 -->
-<SectionHead
-	kicker="藏书 · 橱窗"
-	title="手气不错"
-	meta={`随机 ${items.length} 册 · 悬停显色`}
-	heavy
->
+<SectionHead kicker="藏书 · 橱窗" title="手气不错" meta={`随机 ${items.length} 册`} heavy>
 	{#snippet action()}
 		<button
 			type="button"
