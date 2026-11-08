@@ -6,10 +6,15 @@ import { ApiError } from '#lib/server/api/client';
 export const load: PageServerLoad = async ({ fetch, params, url, setHeaders }) => {
 	const refresh = url.searchParams.get('refresh') === 'true';
 
+	// Legacy links were published as /books/00666.html — accept both spellings
+	// and normalise to the five-digit catalogue number the API expects.
+	const bookid = (params.bookid ?? '').replace(/\.html?$/i, '');
+	if (!/^\d{5}$/.test(bookid)) throw error(404, '未找到该书籍，或此书未入架');
+
 	try {
 		// Read-only: visits are recorded separately (see /api/visit/…) so that
 		// hover-preloads and refreshes don't inflate the counter (INT-03).
-		const result = await getBook(fetch, params.bookid, { refresh, params: { visit: false } });
+		const result = await getBook(fetch, bookid, { refresh, params: { visit: false } });
 		if (!result.data) throw error(404, '未找到该书籍');
 
 		setHeaders({ 'cache-control': 'public, max-age=120, s-maxage=600' });
