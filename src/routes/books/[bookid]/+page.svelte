@@ -5,7 +5,7 @@
 	import Ledger from '#lib/components/paper/ledger.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import SectionHead from '#lib/components/paper/section-head.svelte';
-	import { coverUrl } from '#lib/config/media';
+	import { coverShareUrl, coverUrl } from '#lib/config/media';
 	import { siteConfig } from '#lib/config/site';
 	import { authorSearchUrl, bookByline, bookUrl, formatDecimal, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
@@ -160,7 +160,7 @@
 	isbn={book.isbn}
 	description={shareDescription}
 	tags={book.tags}
-	image={coverUrl(book.bookid)}
+	image={coverShareUrl(book.bookid)}
 	imageAlt={book.title}
 	canonical={`${siteConfig.url}${bookUrl(book.bookid)}`}
 />

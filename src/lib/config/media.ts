@@ -14,3 +14,16 @@ export const COVERS_BASE = '/covers';
 export function coverUrl(bookid: string): string {
 	return `${COVERS_BASE}/${encodeURIComponent(bookid)}.webp`;
 }
+
+/**
+ * The JPEG twin of a cover, for `og:image` only.
+ *
+ * Social crawlers are still unreliable with WebP: X renders a broken image for a
+ * `summary_large_image` card whose `og:image` is WebP (verified 2026-11-08 — same
+ * page, same headers, and the PNG default card renders fine). So the share card
+ * points at the JPEG sibling while the page itself keeps the lighter WebP. Both
+ * live under /covers, which also keeps old `.jpg` links working.
+ */
+export function coverShareUrl(bookid: string): string {
+	return `${COVERS_BASE}/${encodeURIComponent(bookid)}.jpg`;
+}
