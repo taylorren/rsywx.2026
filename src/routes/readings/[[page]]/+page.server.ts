@@ -14,15 +14,23 @@ export const load: PageServerLoad = async ({ fetch, params, url, setHeaders }) =
 		]);
 
 		setHeaders({ 'cache-control': 'public, max-age=120, s-maxage=600' });
+
+		const pagination = reviews.pagination ?? {
+			current_page: page,
+			total_pages: 1,
+			total_results: reviews.data?.length ?? 0,
+			per_page: 9
+		};
+
+		// Same rule as the catalogue: a page beyond the last one does not exist.
+		if (page > 1 && pagination.total_pages > 0 && page > pagination.total_pages) {
+			throw error(404, '这一页不存在');
+		}
+
 		return {
 			summary: summary.data ?? null,
 			reviews: reviews.data ?? [],
-			pagination: reviews.pagination ?? {
-				current_page: page,
-				total_pages: 1,
-				total_results: reviews.data?.length ?? 0,
-				per_page: 9
-			},
+			pagination,
 			page
 		};
 	} catch (cause) {

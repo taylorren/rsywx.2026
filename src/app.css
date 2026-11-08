@@ -27,7 +27,7 @@
 	--paper-raised: oklch(0.993 0.004 90);
 	--ink: oklch(0.216 0.014 75);
 	--ink-soft: oklch(0.45 0.014 75);
-	--ink-faint: oklch(0.615 0.013 78);
+	--ink-faint: oklch(0.545 0.013 78);
 	--rule: oklch(0.835 0.014 88);
 	--rule-strong: oklch(0.52 0.016 80);
 	--spot: oklch(0.5 0.146 32);
@@ -71,7 +71,7 @@
 	--paper-raised: oklch(0.215 0.009 82);
 	--ink: oklch(0.928 0.012 92);
 	--ink-soft: oklch(0.712 0.012 90);
-	--ink-faint: oklch(0.56 0.011 88);
+	--ink-faint: oklch(0.63 0.011 88);
 	--rule: oklch(0.345 0.011 84);
 	--rule-strong: oklch(0.52 0.013 86);
 	--spot: oklch(0.665 0.148 32);
@@ -151,6 +151,20 @@
 	::selection {
 		background-color: var(--spot);
 		color: var(--paper);
+	}
+
+	/* Keyboard focus must be visible: the paper offers no other affordance for
+	   it. Element-qualified selectors so the base `outline-ring/50` wash cannot
+	   dilute the ring; inputs also drop `outline-none` wherever a field lives. */
+	a:focus-visible,
+	button:focus-visible,
+	input:focus-visible,
+	select:focus-visible,
+	textarea:focus-visible,
+	summary:focus-visible,
+	[tabindex]:focus-visible {
+		outline: 2px solid var(--spot);
+		outline-offset: 2px;
 	}
 }
 

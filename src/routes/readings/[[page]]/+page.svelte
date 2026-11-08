@@ -3,6 +3,7 @@
 	import Ledger from '#lib/components/paper/ledger.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
+	import { coverUrl } from '#lib/config/media';
 	import { formatInt, reviewDate } from '#lib/utils';
 	import type { PageProps } from './$types';
 
@@ -57,6 +58,17 @@
 							alt=""
 							loading="lazy"
 							decoding="async"
+							onerror={(event) => {
+								// Blog art is remote; fall back to the local cover once,
+								// then hide the plate rather than print a broken icon.
+								const img = event.currentTarget as HTMLImageElement;
+								if (img.dataset.fallback) {
+									img.style.display = 'none';
+									return;
+								}
+								img.dataset.fallback = '1';
+								img.src = coverUrl(item.bookid);
+							}}
 							class="border-rule aspect-4/3 w-full border object-cover grayscale transition duration-300 group-hover:grayscale-0"
 						/>
 					{/if}

@@ -19,14 +19,22 @@ export const load: PageServerLoad = async ({ fetch, params, url, setHeaders }) =
 		const result = await listBooks(fetch, type, value, page, { refresh });
 		setHeaders({ 'cache-control': 'public, max-age=120, s-maxage=600' });
 
+		const pagination = result.pagination ?? {
+			current_page: page,
+			total_pages: 1,
+			total_results: result.data?.length ?? 0,
+			per_page: 20
+		};
+
+		// A page past the end was never printed — don't print an impossible
+		// "第 999 / 92 页" with an empty list.
+		if (page > 1 && pagination.total_pages > 0 && page > pagination.total_pages) {
+			throw error(404, '这一页不存在');
+		}
+
 		return {
 			books: result.data ?? [],
-			pagination: result.pagination ?? {
-				current_page: page,
-				total_pages: 1,
-				total_results: result.data?.length ?? 0,
-				per_page: 20
-			},
+			pagination,
 			type,
 			displayValue: value === '-' ? '' : value
 		};

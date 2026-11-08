@@ -102,7 +102,7 @@
 					bind:value={query}
 					placeholder="检索藏书"
 					aria-label="检索藏书"
-					class="border-rule focus:border-spot placeholder:text-ink-faint w-28 border-b bg-transparent py-1 text-sm transition-colors outline-none lg:w-40"
+					class="border-rule focus:border-spot placeholder:text-ink-faint w-28 border-b bg-transparent py-1 text-sm transition-colors lg:w-40"
 				/>
 			</form>
 
@@ -157,7 +157,7 @@
 					bind:value={query}
 					placeholder="检索藏书"
 					aria-label="检索藏书"
-					class="border-rule focus:border-spot placeholder:text-ink-faint w-full border-b bg-transparent py-1 text-sm outline-none"
+					class="border-rule focus:border-spot placeholder:text-ink-faint w-full border-b bg-transparent py-1 text-sm"
 				/>
 			</form>
 		</div>

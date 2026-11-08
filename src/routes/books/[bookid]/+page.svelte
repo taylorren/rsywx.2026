@@ -230,7 +230,7 @@
 					placeholder="新标签，仅以空格分隔，单个 ≤30 字…"
 					aria-label="新标签，仅以空格分隔，单个不超过三十字"
 					maxlength="300"
-					class="border-rule focus:border-spot placeholder:text-ink-faint w-full max-w-56 border-b bg-transparent py-0.5 font-mono text-xs outline-none"
+					class="border-rule focus:border-spot placeholder:text-ink-faint w-full max-w-56 border-b bg-transparent py-0.5 font-mono text-xs"
 				/>
 				<button
 					type="submit"
@@ -287,6 +287,15 @@
 									alt=""
 									loading="lazy"
 									decoding="async"
+									onerror={(event) => {
+										const img = event.currentTarget as HTMLImageElement;
+										if (img.dataset.fallback) {
+											img.style.display = 'none';
+											return;
+										}
+										img.dataset.fallback = '1';
+										img.src = coverUrl(book.bookid);
+									}}
 									class="border-rule h-16 w-24 shrink-0 border object-cover grayscale transition group-hover:grayscale-0"
 								/>
 							{/if}

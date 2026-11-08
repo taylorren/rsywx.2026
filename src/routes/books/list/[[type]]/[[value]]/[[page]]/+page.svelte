@@ -73,7 +73,7 @@
 			bind:value={query}
 			placeholder="输入检索词…"
 			aria-label="检索词"
-			class="border-rule focus:border-spot placeholder:text-ink-faint w-full border-b bg-transparent py-1 text-sm outline-none"
+			class="border-rule focus:border-spot placeholder:text-ink-faint w-full border-b bg-transparent py-1 text-sm"
 		/>
 	</div>
 
