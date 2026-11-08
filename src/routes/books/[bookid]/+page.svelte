@@ -5,7 +5,7 @@
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import SectionHead from '#lib/components/paper/section-head.svelte';
 	import { coverUrl } from '#lib/config/media';
-	import { authorSearchUrl, cn, formatDecimal, formatInt } from '#lib/utils';
+	import { authorSearchUrl, formatDecimal, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -54,9 +54,6 @@
 			.map((line) => line.trim())
 			.filter(Boolean)
 	);
-	/** Only break into two columns when there is enough copy to fill them. */
-	const longIntro = $derived((book.intro ?? '').length > 220);
-
 	onMount(() => {
 		// Record exactly one visit per real page view (not hover-preload).
 		fetch(`/api/visit/${book.bookid}`, { method: 'POST' }).catch(() => {});
@@ -142,55 +139,57 @@
 	</div>
 </div>
 
-{#if book.intro}
-	<section class="mt-10">
-		<SectionHead kicker="藏书" title="简介" />
-		<div
-			class={cn(
-				'mt-3 text-[0.9375rem] leading-[1.9] [&>p+p]:mt-2',
-				longIntro ? 'cols sm:columns-2' : 'max-w-[70ch]'
-			)}
-		>
-			{#each introParagraphs as paragraph, index (index)}
-				<p class="indent-[2em]">{paragraph}</p>
-			{/each}
-		</div>
-	</section>
-{/if}
-
-<section class="mt-10">
-	<SectionHead
-		kicker="读书"
-		title="书评"
-		meta={reviewCount ? `${reviewCount} 篇` : '暂无'}
-		heavy={reviewCount > 0}
-	/>
-
-	{#if reviewCount}
-		<ul class="divide-rule divide-y">
-			{#each book.reviews as review (review.id)}
-				<li class="py-3 first:pt-0 last:pb-0">
-					<a href={review.uri} target="_blank" rel="noopener noreferrer" class="group flex gap-3">
-						{#if review.feature}
-							<img
-								src={review.feature}
-								alt=""
-								loading="lazy"
-								decoding="async"
-								class="border-rule h-16 w-24 shrink-0 border object-cover grayscale transition group-hover:grayscale-0"
-							/>
-						{/if}
-						<span class="min-w-0">
-							<span class="group-hover:text-spot block font-medium transition-colors">
-								{review.title}
-							</span>
-							<span class="text-ink-faint font-mono text-xs">{review.datein}</span>
-						</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	{:else}
-		<p class="text-ink-faint text-sm">这本书还没有书评。</p>
+<!-- Two departments share one row on wide screens: the note sits in the left
+     measure, the reviews take the remaining width — no dead space beside a
+     short note. -->
+<div
+	class="mt-10 grid grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]"
+>
+	{#if book.intro}
+		<section>
+			<SectionHead kicker="藏书" title="简介" />
+			<div class="text-[0.9375rem] leading-[1.9] [&>p+p]:mt-2">
+				{#each introParagraphs as paragraph, index (index)}
+					<p class="indent-[2em]">{paragraph}</p>
+				{/each}
+			</div>
+		</section>
 	{/if}
-</section>
+
+	<section class={book.intro ? '' : 'lg:col-span-2'}>
+		<SectionHead
+			kicker="读书"
+			title="书评"
+			meta={reviewCount ? `${reviewCount} 篇` : '暂无'}
+			heavy={reviewCount > 0}
+		/>
+
+		{#if reviewCount}
+			<ul class="divide-rule divide-y">
+				{#each book.reviews as review (review.id)}
+					<li class="py-3 first:pt-0 last:pb-0">
+						<a href={review.uri} target="_blank" rel="noopener noreferrer" class="group flex gap-3">
+							{#if review.feature}
+								<img
+									src={review.feature}
+									alt=""
+									loading="lazy"
+									decoding="async"
+									class="border-rule h-16 w-24 shrink-0 border object-cover grayscale transition group-hover:grayscale-0"
+								/>
+							{/if}
+							<span class="min-w-0">
+								<span class="group-hover:text-spot block font-medium transition-colors">
+									{review.title}
+								</span>
+								<span class="text-ink-faint font-mono text-xs">{review.datein}</span>
+							</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p class="text-ink-faint text-sm">这本书还没有书评。</p>
+		{/if}
+	</section>
+</div>
