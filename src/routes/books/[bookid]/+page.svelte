@@ -5,7 +5,7 @@
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import SectionHead from '#lib/components/paper/section-head.svelte';
 	import { coverUrl } from '#lib/config/media';
-	import { authorSearchUrl, formatDecimal, formatInt } from '#lib/utils';
+	import { authorSearchUrl, cn, formatDecimal, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -46,6 +46,16 @@
 	);
 
 	const reviewCount = $derived(book.reviews?.length ?? 0);
+
+	/** Intro is author's prose: split on blank lines, indent each paragraph. */
+	const introParagraphs = $derived(
+		(book.intro ?? '')
+			.split(/\r?\n+/)
+			.map((line) => line.trim())
+			.filter(Boolean)
+	);
+	/** Only break into two columns when there is enough copy to fill them. */
+	const longIntro = $derived((book.intro ?? '').length > 220);
 
 	onMount(() => {
 		// Record exactly one visit per real page view (not hover-preload).
@@ -135,9 +145,16 @@
 {#if book.intro}
 	<section class="border-rule mt-10 border-t pt-6">
 		<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">简介</h2>
-		<p class="mt-3 text-[0.9375rem] leading-[1.9] whitespace-pre-line sm:columns-2 sm:gap-9">
-			{book.intro}
-		</p>
+		<div
+			class={cn(
+				'mt-3 text-[0.9375rem] leading-[1.9] [&>p+p]:mt-2',
+				longIntro ? 'cols sm:columns-2' : 'max-w-[70ch]'
+			)}
+		>
+			{#each introParagraphs as paragraph, index (index)}
+				<p class="indent-[2em]">{paragraph}</p>
+			{/each}
+		</div>
 	</section>
 {/if}
 
