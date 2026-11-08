@@ -4,64 +4,103 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* =====================================================================
+ * 「今日一页」— newsprint tokens.
+ * The whole site is one printed broadsheet: warm paper, warm ink, hairline
+ * rules, square corners, and a single spot colour (朱砂 cinnabar).
+ * =================================================================== */
+
 :root {
-	--radius: 0.625rem;
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.129 0.042 264.695);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.129 0.042 264.695);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.129 0.042 264.695);
-	--primary: oklch(0.208 0.042 265.755);
-	--primary-foreground: oklch(0.984 0.003 247.858);
-	--secondary: oklch(0.968 0.007 247.896);
-	--secondary-foreground: oklch(0.208 0.042 265.755);
-	--muted: oklch(0.968 0.007 247.896);
-	--muted-foreground: oklch(0.554 0.046 257.417);
-	--accent: oklch(0.968 0.007 247.896);
-	--accent-foreground: oklch(0.208 0.042 265.755);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.929 0.013 255.508);
-	--input: oklch(0.929 0.013 255.508);
-	--ring: oklch(0.704 0.04 256.788);
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
+	/* Type: CJK serif (screen 宋体) first, Latin serif as the tail. System
+	   stacks on purpose — CJK webfonts cost megabytes. */
+	--serif:
+		'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'Noto Serif SC', SimSun, STSong,
+		Georgia, 'Times New Roman', serif;
+	--display:
+		'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'Noto Serif SC', SimSun, STSong,
+		Georgia, 'Times New Roman', serif;
+	--mono:
+		'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+	/* Day edition */
+	--paper: oklch(0.976 0.009 90);
+	--paper-raised: oklch(0.993 0.004 90);
+	--ink: oklch(0.216 0.014 75);
+	--ink-soft: oklch(0.45 0.014 75);
+	--ink-faint: oklch(0.615 0.013 78);
+	--rule: oklch(0.835 0.014 88);
+	--rule-strong: oklch(0.52 0.016 80);
+	--spot: oklch(0.5 0.146 32);
+	--spot-soft: oklch(0.935 0.028 45);
+	--halftone-dot: oklch(0.216 0.014 75 / 45%);
+
+	/* shadcn-svelte tokens, remapped onto the newsprint palette so the
+	   vendored Button / Card inherit the look for free. */
+	--radius: 0px;
+	--background: var(--paper);
+	--foreground: var(--ink);
+	--card: var(--paper-raised);
+	--card-foreground: var(--ink);
+	--popover: var(--paper-raised);
+	--popover-foreground: var(--ink);
+	--primary: var(--ink);
+	--primary-foreground: var(--paper);
+	--secondary: var(--paper-raised);
+	--secondary-foreground: var(--ink);
+	--muted: var(--paper-raised);
+	--muted-foreground: var(--ink-soft);
+	--accent: var(--spot-soft);
+	--accent-foreground: var(--ink);
+	--destructive: oklch(0.55 0.22 27);
+	--border: var(--rule);
+	--input: var(--rule);
+	--ring: var(--spot);
+	--chart-1: var(--spot);
+	--chart-2: oklch(0.55 0.09 250);
+	--chart-3: oklch(0.6 0.08 160);
+	--chart-4: oklch(0.65 0.11 85);
+	--chart-5: oklch(0.5 0.02 75);
+
+	/* Fine paper grain, tiled behind everything (no overlay, no blend mode). */
+	--grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
 }
 
+/* Evening edition */
 .dark {
-	--background: oklch(0.129 0.042 264.695);
-	--foreground: oklch(0.984 0.003 247.858);
-	--card: oklch(0.208 0.042 265.755);
-	--card-foreground: oklch(0.984 0.003 247.858);
-	--popover: oklch(0.208 0.042 265.755);
-	--popover-foreground: oklch(0.984 0.003 247.858);
-	--primary: oklch(0.929 0.013 255.508);
-	--primary-foreground: oklch(0.208 0.042 265.755);
-	--secondary: oklch(0.279 0.041 260.031);
-	--secondary-foreground: oklch(0.984 0.003 247.858);
-	--muted: oklch(0.279 0.041 260.031);
-	--muted-foreground: oklch(0.704 0.04 256.788);
-	--accent: oklch(0.279 0.041 260.031);
-	--accent-foreground: oklch(0.984 0.003 247.858);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.551 0.027 264.364);
-	--chart-1: oklch(0.488 0.243 264.376);
-	--chart-2: oklch(0.696 0.17 162.48);
-	--chart-3: oklch(0.769 0.188 70.08);
-	--chart-4: oklch(0.627 0.265 303.9);
-	--chart-5: oklch(0.645 0.246 16.439);
+	--paper: oklch(0.175 0.008 82);
+	--paper-raised: oklch(0.215 0.009 82);
+	--ink: oklch(0.928 0.012 92);
+	--ink-soft: oklch(0.712 0.012 90);
+	--ink-faint: oklch(0.56 0.011 88);
+	--rule: oklch(0.345 0.011 84);
+	--rule-strong: oklch(0.52 0.013 86);
+	--spot: oklch(0.665 0.148 32);
+	--spot-soft: oklch(0.28 0.05 40);
+	--halftone-dot: oklch(0.928 0.012 92 / 30%);
+	--destructive: oklch(0.68 0.19 25);
 }
 
 @theme inline {
-	--radius-sm: calc(var(--radius) - 4px);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-lg: var(--radius);
-	--radius-xl: calc(var(--radius) + 4px);
+	/* Square corners everywhere — nothing on a broadsheet is rounded. */
+	--radius-sm: 0px;
+	--radius-md: 0px;
+	--radius-lg: 0px;
+	--radius-xl: 0px;
+
+	--font-serif: var(--serif);
+	--font-display: var(--display);
+	--font-mono: var(--mono);
+
+	--color-paper: var(--paper);
+	--color-paper-raised: var(--paper-raised);
+	--color-ink: var(--ink);
+	--color-ink-soft: var(--ink-soft);
+	--color-ink-faint: var(--ink-faint);
+	--color-rule: var(--rule);
+	--color-rule-strong: var(--rule-strong);
+	--color-spot: var(--spot);
+	--color-spot-soft: var(--spot-soft);
+
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
@@ -91,7 +130,85 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
+	html {
+		background-color: var(--paper);
+		background-image: var(--grain);
+		background-size: 140px 140px;
+		background-attachment: fixed;
+	}
 	body {
-		@apply bg-background text-foreground;
+		@apply text-foreground font-serif antialiased;
+		background-color: transparent;
+		text-wrap: pretty;
+	}
+	h1,
+	h2,
+	h3,
+	h4 {
+		@apply font-display;
+		text-wrap: balance;
+	}
+	::selection {
+		background-color: var(--spot);
+		color: var(--paper);
+	}
+}
+
+@layer components {
+	/* Multi-column text flow with printed column rules. */
+	.cols {
+		column-gap: 2.25rem;
+		column-rule: 1px solid var(--rule);
+	}
+	.cols > * {
+		break-inside: avoid;
+	}
+
+	/* Lead-story initial letter. */
+	.dropcap > p:first-of-type::first-letter {
+		float: left;
+		margin-top: 0.1em;
+		padding-right: 0.07em;
+		font-family: var(--display);
+		font-size: 3.5em;
+		font-weight: 700;
+		line-height: 0.8;
+		color: var(--spot);
+	}
+
+	/* Letterpress-style small label. */
+	.kicker {
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+	}
+
+	/* Front-page plate: greyscale + halftone dot screen. Applied to a wrapper,
+	   because a replaced element such as <img> cannot take pseudo-elements. */
+	.halftone {
+		position: relative;
+		overflow: hidden;
+		background-color: var(--ink);
+	}
+	.halftone > img {
+		filter: grayscale(1) contrast(1.22) brightness(1.04);
+	}
+	.halftone::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image: radial-gradient(circle at 1px 1px, var(--halftone-dot) 1px, transparent 0);
+		background-size: 3px 3px;
+		mix-blend-mode: multiply;
+	}
+	.dark .halftone::after {
+		mix-blend-mode: screen;
+	}
+
+	/* Dotted leader between a ledger label and its figure. */
+	.leader-fill {
+		flex: 1 1 auto;
+		border-bottom: 1px dotted var(--rule-strong);
+		transform: translateY(-0.3em);
 	}
 }

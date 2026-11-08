@@ -11,6 +11,8 @@ import {
 	getStatus,
 	getWordOfTheDay
 } from '#lib/server/api/endpoints';
+import { siteConfig } from '#lib/config/site';
+import { byIssue, dateline } from '#lib/utils';
 import type { ApiResponse } from '#lib/types/api';
 
 interface Settled<T> {
@@ -37,6 +39,11 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 	// Dynamic but cacheable: let any upstream proxy absorb repeat hits briefly.
 	setHeaders({ 'cache-control': 'public, max-age=120, s-maxage=600' });
 
+	// The masthead dateline and today's front-page plate are both resolved from
+	// the issue number, on the server — so neither needs a line of client JS.
+	const today = dateline();
+	const plate = byIssue(siteConfig.frontPage, today.issue);
+
 	const [
 		status,
 		latest,
@@ -53,7 +60,7 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 		settle(getStatus(fetch)),
 		settle(getLatestBooks(fetch, 1)),
 		settle(getLastVisited(fetch, 1)),
-		settle(getRandomBooks(fetch, 8)), // fetch extra so the widget can drop the featured (最新入库 / 最近浏览) books
+		settle(getRandomBooks(fetch, 8)), // fetch extra so the widget can drop the featured (新入库 / 最近浏览) books
 		settle(getReadingSummary(fetch)),
 		settle(getLatestReadings(fetch, 5)),
 		settle(getReadingReviews(fetch, 1)),
@@ -64,6 +71,8 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 	]);
 
 	return {
+		dateline: today,
+		plate,
 		fetchedAt: new Date().toISOString(),
 		status,
 		latest,

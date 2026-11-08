@@ -4,77 +4,93 @@
 	const year = new Date().getFullYear();
 </script>
 
-<footer class="bg-muted/40 border-t">
-	<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-		<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-			<div class="space-y-3">
-				<div class="flex items-center gap-2">
-					<img src="/images/logo.svg" alt={siteConfig.name} class="size-8" width="32" height="32" />
-					<a href="/" class="text-lg font-medium">{siteConfig.name}</a>
-				</div>
-				<p class="text-muted-foreground text-xs">
-					© 1989 – {year} <a href="/">{siteConfig.name}</a>
-				</p>
-				<p class="text-muted-foreground text-xs">
-					本站点按照
+<!--
+  Colophon: who holds the copyright, what the page is set in, and where the
+  rest of the estate lives. Closed by a printer's line.
+-->
+<footer class="border-rule-strong mt-16 border-t-[3px] border-double">
+	<div
+		class="mx-auto grid max-w-[80rem] gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr] lg:px-10"
+	>
+		<div>
+			<p class="font-display text-xl font-bold tracking-[0.14em]">{siteConfig.name}</p>
+			<p class="text-ink-soft mt-2 text-xs">
+				© {siteConfig.founded} – {year}
+				<a href="/" class="hover:text-spot transition-colors">{siteConfig.name}</a>
+			</p>
+			<p class="text-ink-soft mt-1 text-xs">
+				本站点按照
+				<a
+					href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-spot hover:underline">CC BY-NC-ND 4.0</a
+				>
+				许可证发布
+			</p>
+		</div>
+
+		<div>
+			<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">技术框架</h2>
+			<ul class="text-ink-soft mt-2 space-y-1 text-xs">
+				<li>
+					前端
 					<a
-						href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
-						class="text-blue-600 hover:underline dark:text-blue-400"
+						href="https://svelte.dev"
 						target="_blank"
-						rel="noopener noreferrer">CC BY-NC-ND 4.0</a
+						rel="noopener noreferrer"
+						class="text-spot hover:underline">SvelteKit</a
 					>
-					许可证发布
-				</p>
-			</div>
+				</li>
+				<li>
+					样式
+					<a
+						href="https://tailwindcss.com"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-spot hover:underline">Tailwind CSS</a
+					>
+				</li>
+				<li>
+					组件
+					<a
+						href="https://shadcn-svelte.com"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-spot hover:underline">shadcn-svelte</a
+					>
+				</li>
+			</ul>
+		</div>
 
-			<div class="space-y-3">
-				<h3 class="text-sm font-semibold">技术框架</h3>
-				<ul class="text-muted-foreground space-y-1 text-xs">
+		<div>
+			<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">导航</h2>
+			<ul class="text-ink-soft mt-2 space-y-1 text-xs">
+				{#each siteConfig.nav as link (link.href)}
 					<li>
-						前端：
-						<a
-							href="https://svelte.dev"
-							class="text-blue-600 hover:underline dark:text-blue-400"
-							target="_blank"
-							rel="noopener noreferrer">SvelteKit</a
-						>
+						<a href={link.href} class="hover:text-spot transition-colors">{link.label}</a>
 					</li>
-					<li>
-						CSS：
-						<a
-							href="https://tailwindcss.com"
-							class="text-blue-600 hover:underline dark:text-blue-400"
-							target="_blank"
-							rel="noopener noreferrer">Tailwind CSS</a
-						>
-					</li>
-					<li>
-						UI：
-						<a
-							href="https://shadcn-svelte.com"
-							class="text-blue-600 hover:underline dark:text-blue-400"
-							target="_blank"
-							rel="noopener noreferrer">shadcn-svelte</a
-						>
-					</li>
-				</ul>
-			</div>
-
-			<div class="space-y-3">
-				<h3 class="text-sm font-semibold">导航</h3>
-				<ul class="text-muted-foreground space-y-1 text-xs">
-					<li><a href="/books/list" class="hover:underline">藏书总目</a></li>
-					<li><a href="/readings" class="hover:underline">读书</a></li>
+				{/each}
+				{#each siteConfig.external as link (link.href)}
 					<li>
 						<a
-							href={siteConfig.links.blog}
-							class="hover:underline"
+							href={link.href}
 							target="_blank"
-							rel="noopener noreferrer">博客</a
+							rel="noopener noreferrer"
+							class="hover:text-spot transition-colors">{link.label}</a
 						>
 					</li>
-				</ul>
-			</div>
+				{/each}
+				<li>
+					<a href={siteConfig.links.contact} class="hover:text-spot transition-colors">联系站长</a>
+				</li>
+			</ul>
 		</div>
 	</div>
+
+	<p
+		class="border-rule text-ink-faint border-t px-4 py-4 text-center font-mono text-[0.625rem] sm:px-6 lg:px-10"
+	>
+		排印：宋体 · 朱砂一色 · 每日一期 · 通篇无圆角
+	</p>
 </footer>

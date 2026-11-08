@@ -4,8 +4,9 @@
 	import Seo from '#lib/components/seo.svelte';
 	import BookCard from '#lib/components/book-card.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
+	import PageHead from '#lib/components/paper/page-head.svelte';
 	import { Button } from '#lib/components/ui/button';
-	import { formatInt } from '#lib/utils';
+	import { cn, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -16,13 +17,13 @@
 
 	const types = [
 		{ value: 'title', label: '书名' },
-		{ value: 'author', label: '作者' },
+		{ value: 'author', label: '著者' },
 		{ value: 'tags', label: '标签' },
 		{ value: 'misc', label: '其他' }
 	] as const;
 
-	const pageUrl = (p: number) =>
-		`/books/list/${data.type}/${data.displayValue ? encodeURIComponent(data.displayValue) : '-'}/${p}`;
+	const pageUrl = (page: number) =>
+		`/books/list/${data.type}/${data.displayValue ? encodeURIComponent(data.displayValue) : '-'}/${page}`;
 
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
@@ -33,43 +34,56 @@
 </script>
 
 <Seo
-	title={data.displayValue ? `搜索：${data.displayValue}` : '藏书总目'}
-	description="任氏有无轩藏书总目，支持按书名、作者、标签检索。"
+	title={data.displayValue ? `检索：${data.displayValue}` : '藏书总目'}
+	description="任氏有无轩藏书总目，支持按书名、著者、标签检索。"
 />
 
-<h1 class="text-3xl font-bold">藏书总目</h1>
+<PageHead
+	kicker="藏书"
+	title={data.displayValue ? `检索「${data.displayValue}」` : '藏书总目'}
+	standfirst="按书名、著者、标签或其他字段检索全部藏书。"
+	meta={`共 ${formatInt(data.pagination.total_results)} 册 · 第 ${data.pagination.current_page} / ${data.pagination.total_pages} 页`}
+/>
 
-<form onsubmit={submit} class="mt-6 flex flex-wrap items-center gap-3">
-	<div class="flex gap-1">
+<form
+	onsubmit={submit}
+	class="border-rule mt-6 flex flex-wrap items-center gap-x-8 gap-y-3 border-b pb-4"
+>
+	<div class="flex items-center gap-5">
 		{#each types as t (t.value)}
 			<button
 				type="button"
 				onclick={() => (type = t.value)}
-				class="rounded-md px-3 py-1.5 text-sm transition-colors {type === t.value
-					? 'bg-primary text-primary-foreground'
-					: 'bg-muted hover:bg-accent'}"
+				class={cn(
+					'border-b-2 pb-1 text-sm transition-colors',
+					type === t.value
+						? 'border-spot text-spot'
+						: 'text-ink-soft hover:text-ink border-transparent'
+				)}
 			>
 				{t.label}
 			</button>
 		{/each}
 	</div>
-	<input
-		type="search"
-		bind:value={query}
-		placeholder="输入检索词…"
-		class="bg-background h-9 flex-1 rounded-md border px-3 text-sm outline-none focus-visible:ring-2"
-	/>
-	<Button type="submit"><Search class="size-4" />搜索</Button>
+
+	<div class="flex min-w-48 flex-1 items-center gap-2">
+		<Search class="text-ink-faint size-4" aria-hidden="true" />
+		<input
+			type="search"
+			bind:value={query}
+			placeholder="输入检索词…"
+			aria-label="检索词"
+			class="border-rule focus:border-spot placeholder:text-ink-faint w-full border-b bg-transparent py-1 text-sm outline-none"
+		/>
+	</div>
+
+	<Button type="submit" variant="outline" size="sm">
+		<Search class="size-4" />检索
+	</Button>
 </form>
 
-<div class="text-muted-foreground mt-4 text-sm">
-	{data.displayValue ? `“${data.displayValue}” 的检索结果：` : ''}共 {formatInt(
-		data.pagination.total_results
-	)} 条 · 第 {data.pagination.current_page} / {data.pagination.total_pages} 页
-</div>
-
 {#if data.books.length}
-	<div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6">
+	<div class="mt-8 grid grid-cols-3 gap-x-4 gap-y-7 sm:grid-cols-4 md:grid-cols-6">
 		{#each data.books as book (book.bookid)}
 			<BookCard {book} />
 		{/each}
@@ -77,5 +91,5 @@
 
 	<Pagination pagination={data.pagination} hrefFor={pageUrl} />
 {:else}
-	<p class="text-muted-foreground mt-10 text-center">没有找到符合条件的藏书。</p>
+	<p class="text-ink-faint mt-10 text-center">没有找到符合条件的藏书。</p>
 {/if}

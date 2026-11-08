@@ -22,13 +22,13 @@
 <button
 	type="button"
 	onclick={toggle}
-	class="text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex size-9 items-center justify-center rounded-md transition-colors"
+	class="text-ink-soft hover:text-spot inline-flex size-9 items-center justify-center transition-colors"
 	aria-label="切换深浅色主题"
 	title="切换主题"
 >
 	{#if isDark}
-		<Sun class="size-5" />
+		<Sun class="size-4.5" />
 	{:else}
-		<Moon class="size-5" />
+		<Moon class="size-4.5" />
 	{/if}
 </button>

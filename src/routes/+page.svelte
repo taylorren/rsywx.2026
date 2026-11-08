@@ -1,102 +1,106 @@
 <script lang="ts">
 	import Seo from '#lib/components/seo.svelte';
-	import SectionHeading from '#lib/components/section-heading.svelte';
-	import Hero from '#lib/components/hero.svelte';
-	import BlogToday from '#lib/components/home/blog-today.svelte';
-	import LastVisited from '#lib/components/home/last-visited.svelte';
-	import LatestBook from '#lib/components/home/latest-book.svelte';
-	import QuoteOfTheDay from '#lib/components/home/quote-of-the-day.svelte';
-	import RandomBooks from '#lib/components/home/random-books.svelte';
-	import ReadingListCard from '#lib/components/home/reading-list-card.svelte';
-	import ReadingSummary from '#lib/components/home/reading-summary.svelte';
-	import StatusCard from '#lib/components/home/status-card.svelte';
-	import WordOfTheDay from '#lib/components/home/word-of-the-day.svelte';
+	import FrontPhoto from '#lib/components/layout/front-photo.svelte';
+	import Masthead from '#lib/components/layout/masthead.svelte';
+	import Box from '#lib/components/paper/box.svelte';
+	import SectionHead from '#lib/components/paper/section-head.svelte';
+	import Classifieds from '#lib/components/home/classifieds.svelte';
+	import DailyBoxes from '#lib/components/home/daily-boxes.svelte';
+	import LibraryLedger from '#lib/components/home/library-ledger.svelte';
+	import NewsBriefs from '#lib/components/home/news-briefs.svelte';
+	import ReviewColumn from '#lib/components/home/review-column.svelte';
+	import TodayColumn from '#lib/components/home/today-column.svelte';
+	import { formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
-	// Books already featured above (最新入库 / 最近浏览) — kept out of 手气不错.
+	// Books already featured above (新入库 / 最近浏览) — kept out of 手气不错.
 	const featuredBookIds = $derived(
 		[data.latest.data?.[0]?.bookid, data.lastVisited.data?.[0]?.bookid].filter((id): id is string =>
 			Boolean(id)
 		)
 	);
 
+	const reviewsWritten = $derived(data.readingSummary.data?.reviews_written);
+	const todayCount = $derived(data.blogs.data?.length ?? 0);
+
 	// 最新书评 = 5 newest; 更早书评 = the next 5 older ones (never overlapping).
 	const latestReviews = $derived((data.latestReading.data ?? []).slice(0, 5));
-	const latestReadingUris = $derived(new Set(latestReviews.map((r) => r.uri)));
+	const latestReadingUris = $derived(new Set(latestReviews.map((review) => review.uri)));
 	const olderReviews = $derived(
 		[...(data.reviews.data ?? []), ...(data.moreReviews.data ?? [])]
 			.filter((review) => !latestReadingUris.has(review.uri))
 			.slice(0, 5)
 	);
+
+	// When nothing was published on this day in years past, the newest reading
+	// note is promoted to the lead — and then dropped from the index below it.
+	const leadReading = $derived(todayCount > 0 ? null : (latestReviews[0] ?? null));
+	const reviewIndex = $derived(leadReading ? latestReviews.slice(1) : latestReviews);
 </script>
 
 <Seo title="首页" description="任氏有无轩 - 个人数字图书馆，收录藏书、读书笔记、博客文章等内容" />
 
-<!-- Hero -->
-<Hero />
+<Masthead dateline={data.dateline} stats={data.status.data} />
 
-<!-- 藏书 -->
-<section class="mt-20">
-	<SectionHeading title="藏书" barClass="from-amber-400 to-amber-600" />
+<!-- Front page: lead column beside a ruled right-hand rail. -->
+<div class="mt-8 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-12">
+	<div class="lg:col-span-8">
+		<FrontPhoto plate={data.plate} />
 
-	<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-		<StatusCard stats={data.status.data} error={data.status.error} />
-		<LatestBook book={data.latest.data?.[0] ?? null} error={data.latest.error} />
-		<LastVisited book={data.lastVisited.data?.[0] ?? null} error={data.lastVisited.error} />
+		<section class="mt-8">
+			<SectionHead
+				kicker="博客 · 往日"
+				title="今日往昔"
+				meta={todayCount ? `${data.dateline.monthDay} · ${todayCount} 篇` : data.dateline.monthDay}
+				heavy
+			/>
+			<TodayColumn posts={data.blogs.data} fallback={leadReading} error={data.blogs.error} />
+		</section>
+
+		<section class="mt-10">
+			<SectionHead
+				kicker="读书"
+				title="最新书评"
+				meta={reviewsWritten != null ? `累计 ${formatInt(reviewsWritten)} 篇` : undefined}
+			/>
+			<ReviewColumn readings={reviewIndex} error={data.latestReading.error} />
+			<div class="border-rule mt-4 border-t pt-3">
+				<a href="/readings" class="text-spot font-mono text-xs hover:underline">全部读书笔记 →</a>
+			</div>
+		</section>
+
+		{#if olderReviews.length}
+			<section class="mt-10">
+				<SectionHead kicker="读书" title="更早书评" />
+				<ReviewColumn readings={olderReviews} error={data.reviews.error} relativeDates />
+			</section>
+		{/if}
 	</div>
 
-	<div class="mt-10">
-		<RandomBooks
-			books={data.random.data ?? []}
-			error={data.random.error}
-			exclude={featuredBookIds}
+	<aside class="border-rule space-y-6 lg:col-span-4 lg:border-l lg:pl-10">
+		<Box head="书讯">
+			<NewsBriefs
+				latest={data.latest.data?.[0] ?? null}
+				visited={data.lastVisited.data?.[0] ?? null}
+				error={data.latest.error}
+			/>
+		</Box>
+
+		<Box head="藏书统计" meta={data.dateline.dateLabel}>
+			<LibraryLedger stats={data.status.data} error={data.status.error} />
+		</Box>
+
+		<DailyBoxes
+			word={data.wotd.data}
+			quote={data.qotd.data}
+			wordError={data.wotd.error}
+			quoteError={data.qotd.error}
 		/>
-	</div>
-</section>
+	</aside>
+</div>
 
-<!-- 读书 -->
-<section class="mt-20">
-	<SectionHeading title="读书" barClass="from-emerald-400 to-emerald-600" />
-
-	<ReadingSummary summary={data.readingSummary.data} error={data.readingSummary.error} />
-
-	<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-		<ReadingListCard
-			title="最新书评"
-			readings={latestReviews}
-			error={data.latestReading.error}
-			prominent
-		/>
-		<ReadingListCard
-			title="更早书评"
-			readings={olderReviews}
-			error={data.reviews.error}
-			relativeDates
-		/>
-	</div>
-
-	<div class="mt-6 text-center">
-		<a href="/readings" class="text-sm text-emerald-600 hover:underline dark:text-emerald-400"
-			>更多读书 →</a
-		>
-	</div>
-</section>
-
-<!-- 博客 -->
-<section class="mt-20">
-	<SectionHeading title="博客" barClass="from-purple-400 to-purple-600" />
-
-	<BlogToday posts={data.blogs.data} error={data.blogs.error} />
-</section>
-
-<!-- 杂项 -->
-<section class="mt-20">
-	<SectionHeading title="杂项" barClass="from-blue-400 to-blue-600" />
-
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-		<WordOfTheDay word={data.wotd.data} error={data.wotd.error} />
-		<QuoteOfTheDay quote={data.qotd.data} error={data.qotd.error} />
-	</div>
+<section class="mt-12">
+	<Classifieds books={data.random.data ?? []} error={data.random.error} exclude={featuredBookIds} />
 </section>

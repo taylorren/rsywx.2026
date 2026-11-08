@@ -1,20 +1,25 @@
 <script lang="ts">
 	import Seo from '#lib/components/seo.svelte';
+	import Ledger from '#lib/components/paper/ledger.svelte';
+	import PageHead from '#lib/components/paper/page-head.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
-	import StatTile from '#lib/components/stat-tile.svelte';
 	import { formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
-	const pageUrl = (p: number) => `/readings/${p}`;
+	const pageUrl = (page: number) => `/readings/${page}`;
 
-	const summaryTiles = $derived(
+	const rows = $derived(
 		data.summary
 			? [
-					{ label: '已读书籍', value: formatInt(data.summary.books_read) },
-					{ label: '读书笔记', value: formatInt(data.summary.reviews_written) },
-					{ label: '读书天数', value: formatInt(data.summary.reading_period.total_days) }
+					{ label: '已读书籍', value: formatInt(data.summary.books_read), unit: '册' },
+					{ label: '读书笔记', value: formatInt(data.summary.reviews_written), unit: '篇' },
+					{
+						label: '读书天数',
+						value: formatInt(data.summary.reading_period.total_days),
+						unit: '天'
+					}
 				]
 			: []
 	);
@@ -22,43 +27,53 @@
 
 <Seo title="读书" description="任氏有无轩读书统计与书评。" />
 
-<h1 class="text-3xl font-bold">读书</h1>
+<PageHead
+	kicker="读书"
+	title="读书笔记"
+	standfirst="阅读心得与书评，按刊出时间倒序排列。"
+	meta={`共 ${formatInt(data.pagination.total_results)} 篇 · 第 ${data.pagination.current_page} / ${data.pagination.total_pages} 页`}
+/>
 
-{#if data.summary}
-	<div class="mt-6 grid grid-cols-3 gap-4 text-center">
-		{#each summaryTiles as tile (tile.label)}
-			<StatTile
-				value={tile.value}
-				label={tile.label}
-				valueClass="text-emerald-600 dark:text-emerald-400"
-			/>
-		{/each}
+{#if rows.length && data.summary}
+	<div
+		class="border-rule mt-6 flex flex-wrap items-end justify-between gap-x-10 gap-y-4 border-b pb-6"
+	>
+		<Ledger {rows} class="w-full max-w-sm" />
+		<p class="text-ink-faint font-mono text-xs">
+			统计区间 {data.summary.reading_period.earliest_date} ~
+			{data.summary.reading_period.latest_date}
+		</p>
 	</div>
-	<p class="text-muted-foreground mt-2 text-center text-xs">
-		统计区间：{data.summary.reading_period.earliest_date} ~ {data.summary.reading_period
-			.latest_date}
-	</p>
 {/if}
 
 {#if data.reviews.length}
-	<div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+	<ul class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 		{#each data.reviews as item (item.uri)}
-			<a href={item.uri} target="_blank" rel="noopener noreferrer" class="group flex flex-col">
-				{#if item.feature}
-					<img
-						src={item.feature}
-						alt={item.title}
-						loading="lazy"
-						class="aspect-[4/3] w-full rounded-lg border object-cover transition-transform group-hover:scale-[1.02]"
-					/>
-				{/if}
-				<div class="mt-3 font-medium group-hover:underline">{item.title}</div>
-				<div class="text-muted-foreground text-sm">{item.datein} · {item.book_title}</div>
-			</a>
+			<li>
+				<a href={item.uri} target="_blank" rel="noopener noreferrer" class="group block">
+					{#if item.feature}
+						<img
+							src={item.feature}
+							alt=""
+							loading="lazy"
+							decoding="async"
+							class="border-rule aspect-4/3 w-full border object-cover grayscale transition duration-300 group-hover:grayscale-0"
+						/>
+					{/if}
+					<span
+						class="font-display group-hover:text-spot mt-2 block leading-snug font-semibold transition-colors"
+					>
+						{item.title}
+					</span>
+					<span class="text-ink-faint mt-0.5 block font-mono text-xs">
+						《{item.book_title}》 · {item.datein}
+					</span>
+				</a>
+			</li>
 		{/each}
-	</div>
+	</ul>
 
 	<Pagination pagination={data.pagination} hrefFor={pageUrl} />
 {:else}
-	<p class="text-muted-foreground mt-10 text-center">暂无书评。</p>
+	<p class="text-ink-faint mt-10 text-center">暂无书评。</p>
 {/if}
