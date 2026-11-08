@@ -3,6 +3,7 @@
 	import { formatInt } from '#lib/utils';
 	import type { Dateline } from '#lib/utils';
 	import type { LibraryStats } from '#lib/types/api';
+	import Logo from '#lib/components/layout/logo.svelte';
 
 	interface Props {
 		dateline: Dateline;
@@ -27,8 +28,13 @@
 		<span class="text-ink-faint">rsywx.net</span>
 	</div>
 
+	<!-- Printer's device: the house seal above the nameplate -->
+	<div class="mt-5 flex justify-center">
+		<Logo class="h-12 w-12" />
+	</div>
+
 	<h1
-		class="font-display text-ink mt-5 text-[clamp(2.75rem,12vw,7rem)] leading-none font-bold tracking-[0.14em]"
+		class="font-display text-ink mt-3 text-[clamp(2.75rem,12vw,7rem)] leading-none font-bold tracking-[0.14em]"
 	>
 		{siteConfig.name}
 	</h1>

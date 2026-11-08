@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { siteConfig } from '#lib/config/site';
+	import Logo from '#lib/components/layout/logo.svelte';
 
 	const year = new Date().getFullYear();
 
@@ -22,7 +23,10 @@
 		class="mx-auto grid max-w-[80rem] gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr] lg:px-10"
 	>
 		<div>
-			<p class="font-display text-xl font-bold tracking-[0.14em]">{siteConfig.name}</p>
+			<div class="flex items-center gap-2.5">
+				<Logo class="size-8" />
+				<p class="font-display text-xl font-bold tracking-[0.14em]">{siteConfig.name}</p>
+			</div>
 			<p class="text-ink-soft mt-2 text-xs">
 				© {siteConfig.founded} – {year}
 				<a href="/" class="hover:text-spot transition-colors">{siteConfig.name}</a>

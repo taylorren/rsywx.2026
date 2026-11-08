@@ -3,6 +3,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import ThemeToggle from '#lib/components/theme-toggle.svelte';
+	import Logo from '#lib/components/layout/logo.svelte';
 	import { siteConfig } from '#lib/config/site';
 	import { cn } from '#lib/utils';
 
@@ -45,8 +46,11 @@
 			{#if mobileOpen}<X class="size-5" />{:else}<Menu class="size-5" />{/if}
 		</button>
 
-		<a href="/" class="font-display shrink-0 text-base font-bold tracking-[0.2em] lg:hidden">
-			{siteConfig.name}
+		<a href="/" class="flex shrink-0 items-center gap-2" aria-label={siteConfig.name}>
+			<Logo class="size-7" />
+			<span class="font-display text-base font-bold tracking-[0.2em] lg:hidden">
+				{siteConfig.name}
+			</span>
 		</a>
 
 		<ul class="hidden items-center gap-6 lg:flex">
