@@ -2,6 +2,15 @@
 	import { siteConfig } from '#lib/config/site';
 
 	const year = new Date().getFullYear();
+
+	// The household, as printed in the colophon: portraits stay monochrome until
+	// the eye falls on them, like every other plate in the paper.
+	const family = [
+		{ file: 'tr.webp', alt: 'TR', title: 'TR the Father', caption: '父' },
+		{ file: 'gr.webp', alt: 'GR', title: 'GR the Mother', caption: '母' },
+		{ file: 'pr.webp', alt: 'PR', title: 'PR the Son', caption: '子' },
+		{ file: 'rt.webp', alt: 'RT', title: 'Rafael the Tortoise', caption: '龟' }
+	];
 </script>
 
 <!--
@@ -64,26 +73,25 @@
 		</div>
 
 		<div>
-			<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">导航</h2>
-			<ul class="text-ink-soft mt-2 space-y-1 text-xs">
-				{#each siteConfig.nav as link (link.href)}
+			<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">家庭成员</h2>
+			<ul class="mt-2 flex flex-wrap items-start gap-3">
+				{#each family as member (member.file)}
 					<li>
-						<a href={link.href} class="hover:text-spot transition-colors">{link.label}</a>
+						<figure>
+							<img
+								src={`/images/${member.file}`}
+								alt={member.alt}
+								title={member.title}
+								loading="lazy"
+								decoding="async"
+								class="border-rule h-16 w-16 border object-cover grayscale transition duration-300 hover:grayscale-0"
+							/>
+							<figcaption class="text-ink-faint mt-1 text-center font-mono text-[0.625rem]">
+								{member.caption}
+							</figcaption>
+						</figure>
 					</li>
 				{/each}
-				{#each siteConfig.external as link (link.href)}
-					<li>
-						<a
-							href={link.href}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="hover:text-spot transition-colors">{link.label}</a
-						>
-					</li>
-				{/each}
-				<li>
-					<a href={siteConfig.links.contact} class="hover:text-spot transition-colors">联系站长</a>
-				</li>
 			</ul>
 		</div>
 	</div>
