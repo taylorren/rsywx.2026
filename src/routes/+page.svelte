@@ -10,7 +10,7 @@
 	import NewsBriefs from '#lib/components/home/news-briefs.svelte';
 	import ReviewColumn from '#lib/components/home/review-column.svelte';
 	import TodayColumn from '#lib/components/home/today-column.svelte';
-	import { byReviewDateAsc, byReviewDateDesc, formatInt } from '#lib/utils';
+	import { byReviewDateDesc, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -25,22 +25,12 @@
 	const reviewsWritten = $derived(data.readingSummary.data?.reviews_written);
 	const todayCount = $derived(data.blogs.data?.length ?? 0);
 
-	// The two bookends of the reading life: the 3 newest notes and the 5
-	// chronologically first ones. Sorted explicitly by publish date so the
-	// printed order never depends on whatever order the upstream API returns.
-	const latestReviews = $derived(
-		[...(data.latestReading.data ?? [])].sort(byReviewDateDesc).slice(0, 3)
-	);
-	const latestReadingUris = $derived(new Set(latestReviews.map((review) => review.uri)));
-	const oldestReviews = $derived(
-		[...(data.oldest.data ?? [])]
-			.sort(byReviewDateAsc)
-			.filter((review) => !latestReadingUris.has(review.uri))
-			.slice(0, 5)
-	);
-	const readingBeginYear = $derived(
-		data.readingSummary.data?.reading_period.earliest_date.slice(0, 4)
-	);
+	// The latest eight notes, printed in two index blocks: the 3 newest, then
+	// the next 5. Sorted explicitly by publish date so the printed order never
+	// depends on whatever order the upstream API returns.
+	const sortedReadings = $derived([...(data.latestReading.data ?? [])].sort(byReviewDateDesc));
+	const latestReviews = $derived(sortedReadings.slice(0, 3));
+	const moreReviews = $derived(sortedReadings.slice(3, 8));
 
 	// When nothing was published on this day in years past, the newest reading
 	// note is promoted to the lead — and then dropped from the index below it.
@@ -52,17 +42,21 @@
 
 <Masthead dateline={data.dateline} stats={data.status.data} />
 
-<!-- The showcase window sits directly under the nameplate, above the fold. -->
-<section class="mt-8">
-	<LuckyShelf books={data.random.data ?? []} error={data.random.error} exclude={featuredBookIds} />
-</section>
-
 <!-- Front page: lead column beside a ruled right-hand rail. -->
-<div class="mt-12 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-12">
+<div class="mt-8 grid grid-cols-1 gap-x-10 gap-y-12 lg:grid-cols-12">
 	<div class="lg:col-span-8">
 		<FrontPhoto plate={data.plate} />
 
+		<!-- The showcase window sits immediately below the front-page plate. -->
 		<section class="mt-8">
+			<LuckyShelf
+				books={data.random.data ?? []}
+				error={data.random.error}
+				exclude={featuredBookIds}
+			/>
+		</section>
+
+		<section class="mt-10">
 			<SectionHead
 				kicker="博客 · 往日"
 				title="今日往昔"
@@ -86,14 +80,10 @@
 			</div>
 		</section>
 
-		{#if oldestReviews.length}
+		{#if moreReviews.length}
 			<section class="mt-10">
-				<SectionHead
-					kicker="读书 · 档案"
-					title="最早书评"
-					meta={readingBeginYear ? `开卷 ${readingBeginYear} 年 · 依时顺排` : '依时顺排'}
-				/>
-				<ReviewColumn readings={oldestReviews} error={data.oldest.error} />
+				<SectionHead kicker="读书" title="再续书评" meta="第 4–8 新 · 新者在前" />
+				<ReviewColumn readings={moreReviews} error={data.latestReading.error} />
 			</section>
 		{/if}
 	</div>
