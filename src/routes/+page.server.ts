@@ -13,19 +13,25 @@ import {
 } from '#lib/server/api/endpoints';
 import { siteConfig } from '#lib/config/site';
 import { byIssue, dateline } from '#lib/utils';
-import type { ApiResponse } from '#lib/types/api';
+import type { ApiResponse, Pagination } from '#lib/types/api';
 
 interface Settled<T> {
 	ok: boolean;
 	data: T | null;
 	error: string | null;
+	pagination?: Pagination;
 }
 
 /** Never let one failing widget take down the whole page. */
 async function settle<T>(promise: Promise<ApiResponse<T>>): Promise<Settled<T>> {
 	try {
 		const response = await promise;
-		return { ok: true, data: (response.data ?? null) as T | null, error: null };
+		return {
+			ok: true,
+			data: (response.data ?? null) as T | null,
+			error: null,
+			pagination: response.pagination
+		};
 	} catch (cause) {
 		return {
 			ok: false,
@@ -52,7 +58,6 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 		readingSummary,
 		latestReading,
 		reviews,
-		moreReviews,
 		wotd,
 		qotd,
 		blogs
@@ -62,13 +67,17 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 		settle(getLastVisited(fetch, 1)),
 		settle(getRandomBooks(fetch, 8)), // fetch extra so the widget can drop the featured (新入库 / 最近浏览) books
 		settle(getReadingSummary(fetch)),
-		settle(getLatestReadings(fetch, 5)),
-		settle(getReadingReviews(fetch, 1)),
-		settle(getReadingReviews(fetch, 2)), // a 2nd page so 更早书评 has 5 non-overlapping items
+		settle(getLatestReadings(fetch, 3)),
+		settle(getReadingReviews(fetch, 1)), // page 1 also carries total_pages, needed below
 		settle(getWordOfTheDay(fetch)),
 		settle(getQuoteOfTheDay(fetch)),
 		settle(getBlogsToday(fetch))
 	]);
+
+	// The other bookend of the reading life: the chronologically first notes
+	// sit on the last page of the reverse-chronological reviews index.
+	const totalPages = reviews.pagination?.total_pages ?? 1;
+	const oldest = totalPages > 1 ? await settle(getReadingReviews(fetch, totalPages)) : reviews;
 
 	return {
 		dateline: today,
@@ -81,7 +90,7 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 		readingSummary,
 		latestReading,
 		reviews,
-		moreReviews,
+		oldest,
 		wotd,
 		qotd,
 		blogs

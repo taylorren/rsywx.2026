@@ -10,7 +10,7 @@
 	import NewsBriefs from '#lib/components/home/news-briefs.svelte';
 	import ReviewColumn from '#lib/components/home/review-column.svelte';
 	import TodayColumn from '#lib/components/home/today-column.svelte';
-	import { byReviewDateDesc, formatInt } from '#lib/utils';
+	import { byReviewDateAsc, byReviewDateDesc, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -25,18 +25,21 @@
 	const reviewsWritten = $derived(data.readingSummary.data?.reviews_written);
 	const todayCount = $derived(data.blogs.data?.length ?? 0);
 
-	// 最新书评 = 5 newest; 更早书评 = the next 5 older ones (never overlapping).
-	// Sorted explicitly by publish date so the printed order never depends on
-	// whatever order the upstream API happens to return.
+	// The two bookends of the reading life: the 3 newest notes and the 5
+	// chronologically first ones. Sorted explicitly by publish date so the
+	// printed order never depends on whatever order the upstream API returns.
 	const latestReviews = $derived(
-		[...(data.latestReading.data ?? [])].sort(byReviewDateDesc).slice(0, 5)
+		[...(data.latestReading.data ?? [])].sort(byReviewDateDesc).slice(0, 3)
 	);
 	const latestReadingUris = $derived(new Set(latestReviews.map((review) => review.uri)));
-	const olderReviews = $derived(
-		[...(data.reviews.data ?? []), ...(data.moreReviews.data ?? [])]
+	const oldestReviews = $derived(
+		[...(data.oldest.data ?? [])]
+			.sort(byReviewDateAsc)
 			.filter((review) => !latestReadingUris.has(review.uri))
-			.sort(byReviewDateDesc)
 			.slice(0, 5)
+	);
+	const readingBeginYear = $derived(
+		data.readingSummary.data?.reading_period.earliest_date.slice(0, 4)
 	);
 
 	// When nothing was published on this day in years past, the newest reading
@@ -78,10 +81,14 @@
 			</div>
 		</section>
 
-		{#if olderReviews.length}
+		{#if oldestReviews.length}
 			<section class="mt-10">
-				<SectionHead kicker="读书" title="更早书评" />
-				<ReviewColumn readings={olderReviews} error={data.reviews.error} relativeDates />
+				<SectionHead
+					kicker="读书 · 档案"
+					title="最早书评"
+					meta={readingBeginYear ? `开卷 ${readingBeginYear} 年 · 依时顺排` : '依时顺排'}
+				/>
+				<ReviewColumn readings={oldestReviews} error={data.oldest.error} />
 			</section>
 		{/if}
 	</div>

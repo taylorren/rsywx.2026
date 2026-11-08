@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { formatRelative, reviewDate } from '#lib/utils';
+	import { reviewDate } from '#lib/utils';
 	import type { Reading } from '#lib/types/api';
 
 	interface Props {
 		readings: Reading[] | null;
 		error?: string | null;
-		/** Render dates as relative time ("3天前") instead of the raw date. */
-		relativeDates?: boolean;
 	}
 
-	let { readings, error = null, relativeDates = false }: Props = $props();
+	let { readings, error = null }: Props = $props();
 
 	const items = $derived(readings ?? []);
 </script>
@@ -37,7 +35,7 @@
 					</span>
 					<span class="leader-fill" aria-hidden="true"></span>
 					<span class="text-ink-soft shrink-0 font-mono text-xs tabular-nums">
-						{relativeDates ? formatRelative(reviewDate(item)) : reviewDate(item)}
+						{reviewDate(item)}
 					</span>
 				</a>
 			</li>

@@ -63,6 +63,14 @@ export function byReviewDateDesc(
 	return reviewDate(b).localeCompare(reviewDate(a));
 }
 
+/** Oldest-first comparator over review publish dates. */
+export function byReviewDateAsc(
+	a: { uri: string; datein: string },
+	b: { uri: string; datein: string }
+): number {
+	return reviewDate(a).localeCompare(reviewDate(b));
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
