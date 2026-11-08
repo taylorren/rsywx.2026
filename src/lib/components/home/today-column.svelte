@@ -58,25 +58,23 @@
 		</div>
 	</article>
 
+	<!-- Same-day index as one flowing line, entries separated by mid-dots. -->
 	{#if rest.length}
-		<div class="border-rule mt-6 border-t pt-3">
-			<p class="kicker text-ink-faint font-mono text-[0.625rem]">同日其他文章</p>
-			<ul class="mt-2 space-y-2">
-				{#each rest as post (post.ID)}
-					<li class="text-sm">
-						<a
-							href={post.permalink}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="hover:text-spot font-medium transition-colors">{post.post_title}</a
-						>
-						<span class="text-ink-faint ml-2 font-mono text-xs">
-							{post.years_ago ? `${post.years_ago} 年前` : post.post_date.slice(0, 10)}
-						</span>
-					</li>
-				{/each}
-			</ul>
-		</div>
+		<p class="border-rule mt-6 border-t pt-3 text-sm leading-[1.9]">
+			<span class="kicker text-ink-faint font-mono text-[0.625rem]">同日其他文章</span>
+			{#each rest as post (post.ID)}
+				<span class="text-ink-faint mx-2" aria-hidden="true">·</span>
+				<a
+					href={post.permalink}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hover:text-spot font-medium transition-colors">{post.post_title}</a
+				>
+				<span class="text-ink-faint ml-1 font-mono text-xs">
+					{post.years_ago ? `${post.years_ago} 年前` : post.post_date.slice(0, 10)}
+				</span>
+			{/each}
+		</p>
 	{/if}
 {:else if fallback}
 	<article>
