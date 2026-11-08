@@ -24,7 +24,8 @@ The SvelteKit frontend for the RSYWX personal library / blog, consuming the
 - **Visits are recorded separately** from reads: the detail page loads
   read-only and the client records a visit via `POST /api/visit/[bookid]`, so
   hover-preloads and refreshes don't inflate counts (backend INT-03).
-- **Covers** are served by this app from `/covers/{bookid}.jpg`.
+- **Covers** are served by this app from `/covers/{bookid}.webp` (600px wide,
+  WebP q90 re-encoded from the JPEG originals — same dimensions, ~71% fewer bytes).
 
 ## Database schema
 
