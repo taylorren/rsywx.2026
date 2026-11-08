@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Brief from '#lib/components/paper/brief.svelte';
 	import { coverUrl } from '#lib/config/media';
-	import { bookByline, formatInt, formatRelative } from '#lib/utils';
+	import { bookByline, bookUrl, formatInt, formatRelative } from '#lib/utils';
 	import type { BookListItem } from '#lib/types/api';
 
 	interface Props {
@@ -15,7 +15,7 @@
 
 {#snippet bookBrief(label: string, book: BookListItem, footnote: string)}
 	<Brief {label}>
-		<a href={`/books/${book.bookid}`} class="group flex gap-3">
+		<a href={bookUrl(book.bookid)} class="group flex gap-3">
 			<img
 				src={coverUrl(book.bookid)}
 				alt=""

@@ -6,10 +6,12 @@ import { ApiError } from '#lib/server/api/client';
 export const load: PageServerLoad = async ({ fetch, params, url, setHeaders }) => {
 	const refresh = url.searchParams.get('refresh') === 'true';
 
-	// Legacy links were published as /books/00666.html — accept both spellings
-	// and normalise to the five-digit catalogue number the API expects.
-	const bookid = (params.bookid ?? '').replace(/\.html?$/i, '');
-	if (!/^\d{5}$/.test(bookid)) throw error(404, '未找到该书籍，或此书未入架');
+	// /books/00666.html is the only address a book is ever published at. The
+	// bare number is not a route we keep alive — it simply does not exist.
+	const raw = params.bookid ?? '';
+	const match = raw.match(/^(\d{5})\.html$/);
+	if (!match) throw error(404, '未找到该书籍，或此书未入架');
+	const bookid = match[1];
 
 	try {
 		// Read-only: visits are recorded separately (see /api/visit/…) so that

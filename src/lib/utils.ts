@@ -33,6 +33,14 @@ export function authorSearchUrl(name: string): string {
 }
 
 /**
+ * Public address of a book detail page. The .html spelling is the one the site
+ * has always published, so it stays the only one we link to or display.
+ */
+export function bookUrl(bookid: string): string {
+	return `/books/${encodeURIComponent(bookid)}.html`;
+}
+
+/**
  * Relative age from an ISO date, e.g. "3天前" / "2个月前" / "1年前".
  * Falls back to the raw string if it can't be parsed.
  */

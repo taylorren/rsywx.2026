@@ -3,7 +3,7 @@
 	import { untrack } from 'svelte';
 	import SectionHead from '#lib/components/paper/section-head.svelte';
 	import { coverUrl } from '#lib/config/media';
-	import { bookByline, cn, formatInt } from '#lib/utils';
+	import { bookByline, bookUrl, cn, formatInt } from '#lib/utils';
 	import type { BookListItem } from '#lib/types/api';
 
 	interface Props {
@@ -71,7 +71,7 @@
 	<ul class="grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4 lg:grid-cols-6">
 		{#each items as book (book.bookid)}
 			<li>
-				<a href={`/books/${book.bookid}`} class="group block">
+				<a href={bookUrl(book.bookid)} class="group block">
 					<img
 						src={coverUrl(book.bookid)}
 						alt=""

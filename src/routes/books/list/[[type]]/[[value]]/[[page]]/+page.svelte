@@ -5,7 +5,7 @@
 	import Pagination from '#lib/components/pagination.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import { Button } from '#lib/components/ui/button';
-	import { authorSearchUrl, cn, formatInt } from '#lib/utils';
+	import { authorSearchUrl, bookUrl, cn, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -104,7 +104,7 @@
 					<!-- The title carries the row's link; the author gets its own,
 					     which runs an author search rather than opening the book. -->
 					<a
-						href={`/books/${book.bookid}`}
+						href={bookUrl(book.bookid)}
 						class="font-display group-hover:text-spot order-2 min-w-0 flex-1 text-[0.9375rem] leading-snug font-semibold transition-colors"
 						title={book.title}
 					>

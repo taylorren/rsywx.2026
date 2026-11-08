@@ -7,7 +7,7 @@
 	import SectionHead from '#lib/components/paper/section-head.svelte';
 	import { coverUrl } from '#lib/config/media';
 	import { siteConfig } from '#lib/config/site';
-	import { authorSearchUrl, formatDecimal, formatInt } from '#lib/utils';
+	import { authorSearchUrl, bookUrl, formatDecimal, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -149,7 +149,7 @@
 	isbn={book.isbn}
 	description={book.intro?.slice(0, 140)}
 	tags={book.tags}
-	canonical={`${siteConfig.url}/books/${book.bookid}`}
+	canonical={`${siteConfig.url}${bookUrl(book.bookid)}`}
 />
 
 <PageHead
