@@ -11,6 +11,7 @@
 	import ReviewColumn from '#lib/components/home/review-column.svelte';
 	import TodayColumn from '#lib/components/home/today-column.svelte';
 	import WeatherBox from '#lib/components/home/weather-box.svelte';
+	import { siteConfig } from '#lib/config/site';
 	import { byReviewDateDesc, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
@@ -37,7 +38,11 @@
 	const reviewIndex = $derived(leadReading ? sortedReadings.slice(1) : sortedReadings);
 </script>
 
-<Seo title="首页" description="任氏有无轩 - 个人数字图书馆，收录藏书、读书笔记、博客文章等内容" />
+<Seo
+	title={`${siteConfig.name} · 个人数字图书馆`}
+	appendSiteName={false}
+	description="任氏有无轩 - 个人数字图书馆，收录藏书、读书笔记、博客文章等内容"
+/>
 
 <Masthead dateline={data.dateline} stats={data.status.data} />
 

@@ -10,6 +10,8 @@
 		image?: string;
 		imageAlt?: string;
 		type?: 'website' | 'article' | 'book' | 'profile';
+		/** See the destructuring default below. */
+		appendSiteName?: boolean;
 		publishedTime?: string;
 		modifiedTime?: string;
 		tags?: string[];
@@ -20,14 +22,26 @@
 		canonical?: string;
 	}
 
+	/*
+	 * The card every page falls back to when it has no artwork of its own: a static
+	 * 1200x630 file rendered by scripts/make-og-card.py, so its dimensions are known
+	 * up front and can be declared to the crawlers below.
+	 */
+	const DEFAULT_OG_IMAGE = '/images/og-default.png';
+
 	let {
 		title = '',
 		description = siteConfig.description,
 		keywords = siteConfig.keywords,
 		author = siteConfig.author,
-		image = '/images/og-default.jpg',
+		image = DEFAULT_OG_IMAGE,
 		imageAlt = siteConfig.name,
 		type = 'website',
+		/**
+		 * Turned off when `title` is already a complete line — the homepage names
+		 * the whole publication, so appending the site name would repeat it.
+		 */
+		appendSiteName = true,
 		publishedTime,
 		modifiedTime,
 		tags = [],
@@ -41,7 +55,9 @@
 	const siteName = siteConfig.name;
 	const siteUrl = siteConfig.url;
 
-	const fullTitle = $derived(title ? `${title} | ${siteName}` : siteName);
+	const fullTitle = $derived(
+		title ? (appendSiteName ? `${title} | ${siteName}` : title) : siteName
+	);
 	const currentUrl = $derived(canonical ?? `${siteUrl}${page.url.pathname}`);
 	const fullImageUrl = $derived(image.startsWith('http') ? image : `${siteUrl}${image}`);
 	const allKeywords = $derived([...new Set([...keywords.split(','), ...tags])].join(','));
@@ -116,6 +132,11 @@
 	<meta property="og:url" content={currentUrl} />
 	<meta property="og:image" content={fullImageUrl} />
 	<meta property="og:image:alt" content={imageAlt} />
+	{#if image === DEFAULT_OG_IMAGE}
+		<!-- Known size: lets a crawler lay out the card before fetching it. -->
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+	{/if}
 	<meta property="og:site_name" content={siteName} />
 	<meta property="og:locale" content="zh_CN" />
 

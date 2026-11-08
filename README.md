@@ -26,6 +26,14 @@ The SvelteKit frontend for the RSYWX personal library / blog, consuming the
   hover-preloads and refreshes don't inflate counts (backend INT-03).
 - **Covers** are served by this app from `/covers/{bookid}.webp` (600px wide,
   WebP q90 re-encoded from the JPEG originals — same dimensions, ~71% fewer bytes).
+- **Front-page plates** (`static/images/{hannibal,hilbert,keynes}.webp`) are WebP q90
+  too, 818–1400px wide, 85–138 KB each. `byIssue()` picks one per _issue_ — the day
+  of the year in `Asia/Shanghai` — on the server, so the plate rotates at midnight
+  with no client JS (`hannibal → hilbert → keynes → …`).
+- **Share cards** never point at a missing file. Book pages pass their own cover
+  (`<Seo image={coverUrl(book.bookid)} />`); every other page falls back to the
+  1200×630 `static/images/og-default.png` that `scripts/make-og-card.py` renders
+  from the design tokens in `app.css`. Error pages emit no OG tags at all.
 
 ## Database schema
 
@@ -61,6 +69,17 @@ pnpm run dev
 ```
 
 Point `RSYWX_API_BASE_URL` at the local backend (`…/api/v1`).
+
+### Share-card preview
+
+`/og-preview` audits any page's `og:*` / `twitter:*` tags against the local build:
+it fetches the page server-side, then renders the X (large + small), Facebook and
+Telegram layouts from the real `og:image`, measuring the crop each one applies.
+
+```
+http://localhost:5173/og-preview
+http://localhost:5173/og-preview?url=/books/00001.html
+```
 
 ## Scripts
 

@@ -7,7 +7,7 @@
 	import SectionHead from '#lib/components/paper/section-head.svelte';
 	import { coverUrl } from '#lib/config/media';
 	import { siteConfig } from '#lib/config/site';
-	import { authorSearchUrl, bookUrl, formatDecimal, formatInt } from '#lib/utils';
+	import { authorSearchUrl, bookByline, bookUrl, formatDecimal, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -46,6 +46,17 @@
 			.filter(Boolean)
 			.join(' · ') || undefined
 	);
+
+	/**
+	 * What the search snippet and the share card print — the same catalogue line
+	 * the page prints as its standfirst: 《书名》【地域】作者 | 译者.
+	 *
+	 * The 简介 column is deliberately not used here: in practice it is a
+	 * copy-notes field (「购于苏州书展」「曹老师赠送」) and is empty for half the
+	 * catalogue, so it would make some cards useful and others empty. One uniform
+	 * line that always identifies the record beats a mixed bag.
+	 */
+	const shareDescription = $derived(`《${book.title}》${bookByline(book)}`);
 
 	const reviewCount = $derived(book.reviews?.length ?? 0);
 
@@ -147,8 +158,10 @@
 	bookTitle={book.title}
 	bookAuthor={book.author}
 	isbn={book.isbn}
-	description={book.intro?.slice(0, 140)}
+	description={shareDescription}
 	tags={book.tags}
+	image={coverUrl(book.bookid)}
+	imageAlt={book.title}
 	canonical={`${siteConfig.url}${bookUrl(book.bookid)}`}
 />
 
