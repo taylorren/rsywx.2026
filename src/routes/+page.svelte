@@ -70,9 +70,7 @@
 			<SectionHead
 				kicker="读书"
 				title="最新书评"
-				meta={reviewsWritten != null
-					? `累计 ${formatInt(reviewsWritten)} 篇 · 新者在前`
-					: '新者在前'}
+				meta={reviewsWritten != null ? `累计 ${formatInt(reviewsWritten)} 篇` : undefined}
 			/>
 			<ReviewColumn readings={reviewIndex} error={data.latestReading.error} />
 			<div class="border-rule mt-4 border-t pt-3">
@@ -82,7 +80,7 @@
 
 		{#if moreReviews.length}
 			<section class="mt-10">
-				<SectionHead kicker="读书" title="再续书评" meta="第 4–8 新 · 新者在前" />
+				<SectionHead kicker="读书" title="再续书评" meta="第 4–8 篇" />
 				<ReviewColumn readings={moreReviews} error={data.latestReading.error} />
 			</section>
 		{/if}

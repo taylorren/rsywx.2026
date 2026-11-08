@@ -13,6 +13,9 @@
 	const items = $derived(readings ?? []);
 	const lead = $derived(items[0] ?? null);
 	const rest = $derived(items.slice(1));
+
+	// The remote feature art fades in over the local cover once it arrives.
+	let featureOn = $state(false);
 </script>
 
 <!--
@@ -44,26 +47,38 @@
 		</p>
 
 		<div class="mt-4 flex gap-4">
-			<img
-				src={lead.feature ?? coverUrl(lead.bookid)}
-				alt=""
-				loading="lazy"
-				decoding="async"
-				onerror={(event) => {
-					const img = event.currentTarget as HTMLImageElement;
-					// External blog art can be slow or gone: fall back to the
-					// book cover once, so the plate never prints empty.
-					if (img.dataset.fallback) return;
-					img.dataset.fallback = '1';
-					img.src = coverUrl(lead.bookid);
-				}}
+			<!-- Stacked plate: the local cover prints at once (SSR never waits on
+			     remote art); the note's own feature art fades in over it once
+			     loaded, and simply never appears when slow or gone. -->
+			<span
 				class={cn(
-					'border-rule shrink-0 border object-cover grayscale',
+					'border-rule relative shrink-0 overflow-hidden border',
 					lead.feature ? 'h-24 w-32' : 'h-28 w-20'
 				)}
-			/>
+			>
+				<img
+					src={coverUrl(lead.bookid)}
+					alt=""
+					loading="lazy"
+					decoding="async"
+					class="absolute inset-0 size-full object-cover grayscale"
+				/>
+				{#if lead.feature}
+					<img
+						src={lead.feature}
+						alt=""
+						loading="lazy"
+						decoding="async"
+						onload={() => (featureOn = true)}
+						class={cn(
+							'absolute inset-0 size-full object-cover grayscale transition-opacity duration-700',
+							featureOn ? 'opacity-100' : 'opacity-0'
+						)}
+					/>
+				{/if}
+			</span>
 			<p class="text-ink-soft text-[0.9375rem] leading-[1.9]">
-				本篇评《{lead.book_title}》（藏号 {lead.bookid}），全文刊于博客，<a
+				藏号 {lead.bookid} · 全文刊于博客，<a
 					href={lead.uri}
 					target="_blank"
 					rel="noopener noreferrer"
@@ -78,13 +93,19 @@
 			<span class="kicker text-ink-faint font-mono text-[0.625rem]">同栏其余</span>
 			{#each rest as item (item.uri)}
 				<span class="text-ink-faint mx-2" aria-hidden="true">·</span>
-				<a
-					href={item.uri}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="hover:text-spot font-medium transition-colors">{item.title}</a
-				>
-				<span class="text-ink-faint ml-1 font-mono text-xs">{reviewDate(item)}</span>
+				<!-- Title + age travel as one atomic unit: the pair may wrap
+				     internally but never splits across the line break. -->
+				<span class="inline-block">
+					<a
+						href={item.uri}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="hover:text-spot font-medium transition-colors">{item.title}</a
+					>
+					<span class="text-ink-faint ml-1 font-mono text-xs"
+						>{formatRelative(reviewDate(item))}</span
+					>
+				</span>
 			{/each}
 		</p>
 	{/if}
