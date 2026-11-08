@@ -43,7 +43,7 @@ export const siteConfig = {
 	/** In-app navigation, rendered in the folio bar. */
 	nav: [
 		{ href: '/', label: '首页' },
-		{ href: '/books/list', label: '藏书总目' },
+		{ href: '/books/list', label: '藏书' },
 		{ href: '/readings', label: '读书' }
 	],
 
