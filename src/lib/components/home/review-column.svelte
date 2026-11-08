@@ -90,7 +90,7 @@
 
 	{#if rest.length}
 		<p class="border-rule mt-6 border-t pt-3 text-sm leading-[1.9]">
-			<span class="kicker text-ink-faint font-mono text-[0.625rem]">同栏其余</span>
+			<span class="kicker text-ink-faint font-mono text-[0.625rem]">其他书评：</span>
 			{#each rest as item (item.uri)}
 				<span class="text-ink-faint mx-2" aria-hidden="true">·</span>
 				<!-- Title + age travel as one atomic unit: the pair may wrap
