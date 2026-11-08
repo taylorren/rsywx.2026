@@ -46,6 +46,12 @@ mysql -u <user> -p rsywx < docs/schema.sql
 > `docs/schema.sql` is a **reference snapshot** of the live database. The source
 > of truth for the schema is the backend repository's `migrations/` directory.
 
+> **Data note — never derive `bookid` from `id`.** The catalogue mostly follows
+> `id 111 → bookid '00111'`, but there are historical exceptions (`id 1779` is
+> missing and the next two rows shift by one, so `01781` has neither a row nor a
+> cover). Every link, cover path, visit record and tag write keys off the
+> `bookid` returned by the API.
+
 ## Development
 
 ```bash
