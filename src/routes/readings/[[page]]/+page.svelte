@@ -3,7 +3,7 @@
 	import Ledger from '#lib/components/paper/ledger.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
-	import { formatInt } from '#lib/utils';
+	import { formatInt, reviewDate } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -66,7 +66,7 @@
 						{item.title}
 					</span>
 					<span class="text-ink-faint mt-0.5 block font-mono text-xs">
-						《{item.book_title}》 · {item.datein}
+						《{item.book_title}》 · {reviewDate(item)}
 					</span>
 				</a>
 			</li>

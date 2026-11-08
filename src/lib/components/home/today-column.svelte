@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { coverUrl } from '#lib/config/media';
-	import { cn, formatRelative } from '#lib/utils';
+	import { cn, formatRelative, reviewDate } from '#lib/utils';
 	import type { BlogPost, Reading } from '#lib/types/api';
 
 	interface Props {
@@ -94,7 +94,7 @@
 		>
 			<span class="text-spot font-semibold">最新书评</span>
 			<span>评《{fallback.book_title}》</span>
-			<span>{fallback.datein}</span>
+			<span>{reviewDate(fallback)}</span>
 			<span class="text-ink-faint">{formatRelative(fallback.datein)}</span>
 		</p>
 

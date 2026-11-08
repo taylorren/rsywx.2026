@@ -44,6 +44,25 @@ export function formatRelative(dateStr: string | null | undefined, now: Date = n
 	return `${Math.floor(days / 365)}年前`;
 }
 
+/**
+ * The date a reading note was published on the blog. The readings endpoints
+ * only carry `datein` — when the log entry was made — which can lag the
+ * article by a day; the permalink encodes the true publish date
+ * (…/YYYY/MM/DD/slug/). Falls back to `datein` when the URI carries no date.
+ */
+export function reviewDate(reading: { uri: string; datein: string }): string {
+	const match = reading.uri.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+	return match ? `${match[1]}-${match[2]}-${match[3]}` : reading.datein.slice(0, 10);
+}
+
+/** Newest-first comparator over review publish dates. */
+export function byReviewDateDesc(
+	a: { uri: string; datein: string },
+	b: { uri: string; datein: string }
+): number {
+	return reviewDate(b).localeCompare(reviewDate(a));
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

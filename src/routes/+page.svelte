@@ -10,7 +10,7 @@
 	import NewsBriefs from '#lib/components/home/news-briefs.svelte';
 	import ReviewColumn from '#lib/components/home/review-column.svelte';
 	import TodayColumn from '#lib/components/home/today-column.svelte';
-	import { formatInt } from '#lib/utils';
+	import { byReviewDateDesc, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -26,11 +26,16 @@
 	const todayCount = $derived(data.blogs.data?.length ?? 0);
 
 	// 最新书评 = 5 newest; 更早书评 = the next 5 older ones (never overlapping).
-	const latestReviews = $derived((data.latestReading.data ?? []).slice(0, 5));
+	// Sorted explicitly by publish date so the printed order never depends on
+	// whatever order the upstream API happens to return.
+	const latestReviews = $derived(
+		[...(data.latestReading.data ?? [])].sort(byReviewDateDesc).slice(0, 5)
+	);
 	const latestReadingUris = $derived(new Set(latestReviews.map((review) => review.uri)));
 	const olderReviews = $derived(
 		[...(data.reviews.data ?? []), ...(data.moreReviews.data ?? [])]
 			.filter((review) => !latestReadingUris.has(review.uri))
+			.sort(byReviewDateDesc)
 			.slice(0, 5)
 	);
 
@@ -63,7 +68,9 @@
 			<SectionHead
 				kicker="读书"
 				title="最新书评"
-				meta={reviewsWritten != null ? `累计 ${formatInt(reviewsWritten)} 篇` : undefined}
+				meta={reviewsWritten != null
+					? `累计 ${formatInt(reviewsWritten)} 篇 · 新者在前`
+					: '新者在前'}
 			/>
 			<ReviewColumn readings={reviewIndex} error={data.latestReading.error} />
 			<div class="border-rule mt-4 border-t pt-3">
