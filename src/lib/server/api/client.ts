@@ -19,6 +19,10 @@ export interface ApiFetchOptions {
 	params?: Record<string, string | number | boolean | undefined | null>;
 	/** Ask the backend to recompute cached data (`?refresh=true`). */
 	refresh?: boolean;
+	/** HTTP method; defaults to GET. */
+	method?: 'GET' | 'POST';
+	/** JSON body for write calls — sets Content-Type and serialises for you. */
+	body?: unknown;
 }
 
 type Fetch = typeof globalThis.fetch;
@@ -52,9 +56,18 @@ export async function apiFetch<T>(
 
 	const url = buildApiUrl(endpoint, params);
 
+	const init: RequestInit = {
+		method: options.method ?? 'GET',
+		headers: {
+			'X-API-Key': RSYWX_API_KEY,
+			...(options.body === undefined ? {} : { 'Content-Type': 'application/json' })
+		},
+		...(options.body === undefined ? {} : { body: JSON.stringify(options.body) })
+	};
+
 	let response: Response;
 	try {
-		response = await fetchFn(url, { headers: { 'X-API-Key': RSYWX_API_KEY } });
+		response = await fetchFn(url, init);
 	} catch (cause) {
 		throw new ApiError(
 			503,

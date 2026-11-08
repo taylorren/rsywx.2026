@@ -15,5 +15,9 @@ export const variables = defineEnvVars({
 	RSYWX_API_KEY: {
 		description: 'API key sent as the X-API-Key header. Server-side use only.',
 		schema: (value) => value ?? ''
+	},
+	RSYWX_TAG_EDIT: {
+		description: 'Set to "off" to disable the tag editor (and its write route) entirely.',
+		schema: (value) => (value === 'off' ? 'off' : 'on')
 	}
 });

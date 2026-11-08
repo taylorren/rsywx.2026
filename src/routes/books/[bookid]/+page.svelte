@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
+	import { Loader } from '@lucide/svelte';
 	import Seo from '#lib/components/seo.svelte';
 	import Ledger from '#lib/components/paper/ledger.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
@@ -46,6 +47,60 @@
 	);
 
 	const reviewCount = $derived(book.reviews?.length ?? 0);
+
+	// Local copy so a freshly added tag shows up without a reload.
+	let tags = $state(untrack(() => book.tags ?? []));
+	let tagInput = $state('');
+	let tagBusy = $state(false);
+	let tagNote = $state('');
+	let tagError = $state(false);
+
+	/** Split on any run of spaces (half/full width), commas or 、. */
+	function splitTags(value: string): string[] {
+		return value
+			.split(/[\s\u3000,，、]+/)
+			.map((tag) => tag.trim())
+			.filter(Boolean);
+	}
+
+	async function saveTags() {
+		const wanted = splitTags(tagInput);
+		if (!wanted.length) return;
+
+		tagBusy = true;
+		tagError = false;
+		tagNote = '';
+		try {
+			const response = await fetch(`/api/tags/${book.bookid}`, {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ tags: wanted })
+			});
+			const body = await response.json().catch(() => null);
+
+			if (!response.ok || !body?.success) {
+				tagError = true;
+				tagNote = body?.message ?? `保存失败（HTTP ${response.status}）`;
+				return;
+			}
+
+			const added: string[] = body.added ?? [];
+			const duplicates: string[] = body.duplicates ?? [];
+			tags = [...tags, ...added.filter((tag) => !tags.includes(tag))];
+			tagInput = '';
+			tagNote = [
+				added.length ? `已添加：${added.join('、')}` : '',
+				duplicates.length ? `已存在：${duplicates.join('、')}` : ''
+			]
+				.filter(Boolean)
+				.join('；');
+		} catch (cause) {
+			tagError = true;
+			tagNote = cause instanceof Error ? cause.message : '网络错误';
+		} finally {
+			tagBusy = false;
+		}
+	}
 
 	/** Intro is author's prose: split on blank lines, indent each paragraph. */
 	const introParagraphs = $derived(
@@ -121,18 +176,48 @@
 					>{/if}
 			</p>
 
-			{#if book.tags?.length}
-				<p class="mt-2 text-sm">
-					<span class="kicker text-ink-faint font-mono text-[0.625rem]">标签</span>
-					<span class="ml-2">
-						{#each book.tags as tag, index (tag)}
-							{#if index > 0}<span class="text-ink-faint"> · </span>{/if}
-							<a
-								href={`/books/list/tags/${encodeURIComponent(tag)}/1`}
-								class="text-spot hover:underline">{tag}</a
-							>
-						{/each}
-					</span>
+			<div class="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+				<span class="kicker text-ink-faint font-mono text-[0.625rem]">标签</span>
+				<span class="flex-1">
+					{#each tags as tag, index (tag)}
+						{#if index > 0}<span class="text-ink-faint"> · </span>{/if}
+						<a
+							href={`/books/list/tags/${encodeURIComponent(tag)}/1`}
+							class="text-spot hover:underline">{tag}</a
+						>
+					{/each}
+					{#if !tags.length}<span class="text-ink-faint">—</span>{/if}
+				</span>
+			</div>
+
+			<!-- Add tags: space separated (full-width spaces, commas and 、 too). -->
+			<form
+				class="mt-1.5 flex items-center gap-2"
+				onsubmit={(event) => {
+					event.preventDefault();
+					saveTags();
+				}}
+			>
+				<input
+					bind:value={tagInput}
+					placeholder="新标签，空格分隔…"
+					aria-label="新标签，空格分隔"
+					maxlength="300"
+					class="border-rule focus:border-spot placeholder:text-ink-faint w-full max-w-56 border-b bg-transparent py-0.5 font-mono text-xs outline-none"
+				/>
+				<button
+					type="submit"
+					disabled={tagBusy || !tagInput.trim()}
+					class="hover:text-spot text-ink-faint inline-flex items-center gap-1 font-mono text-[0.625rem] transition-colors disabled:opacity-40"
+				>
+					{#if tagBusy}<Loader class="size-3 animate-spin" aria-hidden="true" />{/if}
+					添加
+				</button>
+			</form>
+
+			{#if tagNote}
+				<p class="mt-1 font-mono text-[0.625rem] {tagError ? 'text-spot' : 'text-ink-faint'}">
+					{tagNote}
 				</p>
 			{/if}
 		</div>
