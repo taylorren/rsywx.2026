@@ -15,7 +15,12 @@ export const load: PageServerLoad = async ({ fetch, params, url, setHeaders }) =
 		setHeaders({ 'cache-control': 'public, max-age=120, s-maxage=600' });
 		return { book: result.data, cached: result.cached ?? false };
 	} catch (cause) {
-		if (cause instanceof ApiError) throw error(cause.status, cause.message);
+		if (cause instanceof ApiError) {
+			// The API answers "Book not found" for unshelved records (location
+			// '--'/'na') as well, so keep the wording useful for a reader.
+			if (cause.status === 404) throw error(404, '未找到该书籍，或此书未入架');
+			throw error(cause.status, cause.message);
+		}
 		throw cause;
 	}
 };

@@ -51,7 +51,12 @@ export const POST: RequestHandler = async ({ request, params, url, fetch }) => {
 		await clearApiCache(fetch).catch(() => {});
 		return json({ success: true, ...result });
 	} catch (cause) {
-		if (cause instanceof ApiError) throw error(cause.status, cause.message);
+		if (cause instanceof ApiError) {
+			// Backend wording for unshelved records ('--'/'na') is "Book not
+			// found"; say something a reader can act on instead.
+			if (cause.status === 404) throw error(404, '此书未入架或不存在，无法添加标签');
+			throw error(cause.status, cause.message);
+		}
 		throw cause;
 	}
 };
