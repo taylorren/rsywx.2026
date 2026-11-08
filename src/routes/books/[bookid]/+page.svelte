@@ -55,10 +55,14 @@
 	let tagNote = $state('');
 	let tagError = $state(false);
 
-	/** Split on any run of spaces (half/full width), commas or 、. */
+	/** Same limits the write route enforces — mirrored so nothing is dropped silently. */
+	const MAX_TAGS = 10;
+	const MAX_TAG_LENGTH = 30;
+
+	/** Space is the only delimiter (any whitespace run, incl. the full-width space). */
 	function splitTags(value: string): string[] {
 		return value
-			.split(/[\s\u3000,，、]+/)
+			.split(/\s+/)
 			.map((tag) => tag.trim())
 			.filter(Boolean);
 	}
@@ -67,14 +71,28 @@
 		const wanted = splitTags(tagInput);
 		if (!wanted.length) return;
 
-		tagBusy = true;
+		// Option A: send what is legal, then report exactly what was ignored and
+		// why — never drop a tag without saying so.
+		const tooLong = wanted.filter((tag) => tag.length > MAX_TAG_LENGTH);
+		const unique = [...new Set(wanted.filter((tag) => tag.length <= MAX_TAG_LENGTH))];
+		const overflow = unique.slice(MAX_TAGS);
+		const toSend = unique.slice(0, MAX_TAGS);
+
 		tagError = false;
 		tagNote = '';
+
+		if (!toSend.length) {
+			tagError = true;
+			tagNote = `没有可提交的标签：单个标签不得超过 ${MAX_TAG_LENGTH} 字`;
+			return;
+		}
+
+		tagBusy = true;
 		try {
 			const response = await fetch(`/api/tags/${book.bookid}`, {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ tags: wanted })
+				body: JSON.stringify({ tags: toSend })
 			});
 			const body = await response.json().catch(() => null);
 
@@ -88,9 +106,16 @@
 			const duplicates: string[] = body.duplicates ?? [];
 			tags = [...tags, ...added.filter((tag) => !tags.includes(tag))];
 			tagInput = '';
+
+			const ignored = [
+				tooLong.length ? `超长：${tooLong.join('、')}` : '',
+				overflow.length ? `超出 ${MAX_TAGS} 个：${overflow.join('、')}` : ''
+			].filter(Boolean);
+
 			tagNote = [
 				added.length ? `已添加：${added.join('、')}` : '',
-				duplicates.length ? `已存在：${duplicates.join('、')}` : ''
+				duplicates.length ? `已存在：${duplicates.join('、')}` : '',
+				ignored.length ? `已忽略 —— ${ignored.join('；')}` : ''
 			]
 				.filter(Boolean)
 				.join('；');
@@ -200,8 +225,8 @@
 			>
 				<input
 					bind:value={tagInput}
-					placeholder="新标签，空格分隔…"
-					aria-label="新标签，空格分隔"
+					placeholder="新标签，仅以空格分隔，单个 ≤30 字…"
+					aria-label="新标签，仅以空格分隔，单个不超过三十字"
 					maxlength="300"
 					class="border-rule focus:border-spot placeholder:text-ink-faint w-full max-w-56 border-b bg-transparent py-0.5 font-mono text-xs outline-none"
 				/>
