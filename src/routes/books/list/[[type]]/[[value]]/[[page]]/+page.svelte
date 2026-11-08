@@ -2,11 +2,10 @@
 	import { Search } from '@lucide/svelte';
 	import { untrack } from 'svelte';
 	import Seo from '#lib/components/seo.svelte';
-	import BookCard from '#lib/components/book-card.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
 	import PageHead from '#lib/components/paper/page-head.svelte';
 	import { Button } from '#lib/components/ui/button';
-	import { cn, formatInt } from '#lib/utils';
+	import { bookByline, cn, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -83,11 +82,45 @@
 </form>
 
 {#if data.books.length}
-	<div class="mt-8 grid grid-cols-3 gap-x-4 gap-y-7 sm:grid-cols-4 md:grid-cols-6">
-		{#each data.books as book (book.bookid)}
-			<BookCard {book} />
-		{/each}
+	<!-- A pure list: catalogue number, title, byline and shelf mark, one book to
+	     a line. The column rule above and between rows is the only furniture. -->
+	<div
+		class="border-rule-strong text-ink-faint mt-8 hidden border-b-2 pb-1 font-mono text-[0.6875rem] sm:flex sm:items-baseline sm:gap-x-3"
+	>
+		<span class="w-12 shrink-0">编号</span>
+		<span class="flex-1">书名</span>
+		<span class="w-64 shrink-0">地区 / 著者 / 译者</span>
+		<span>架位</span>
 	</div>
+
+	<ul>
+		{#each data.books as book (book.bookid)}
+			<li>
+				<a
+					href={`/books/${book.bookid}`}
+					class="group hover:bg-accent/40 border-rule flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-b py-2.5 transition-colors"
+					title={`${book.title} · ${book.author}`}
+				>
+					<span class="text-ink-faint order-1 w-12 shrink-0 font-mono text-xs tabular-nums">
+						{book.bookid}
+					</span>
+					<span
+						class="font-display group-hover:text-spot order-2 min-w-0 flex-1 text-[0.9375rem] leading-snug font-semibold transition-colors"
+					>
+						{book.title}
+					</span>
+					<span class="text-ink-faint order-3 shrink-0 font-mono text-xs sm:order-4">
+						{book.location || '—'}
+					</span>
+					<span
+						class="text-ink-soft order-4 w-full truncate text-xs sm:order-3 sm:w-64 sm:shrink-0"
+					>
+						{bookByline(book)}
+					</span>
+				</a>
+			</li>
+		{/each}
+	</ul>
 
 	<Pagination pagination={data.pagination} hrefFor={pageUrl} />
 {:else}
