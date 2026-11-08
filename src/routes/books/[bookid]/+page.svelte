@@ -67,12 +67,16 @@
 	meta={visitLine}
 />
 
-<div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr]">
+<div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[300px_1fr] lg:grid-cols-[400px_1fr]">
 	<figure>
+		<!-- Covers print in colour and at their natural ratio: they are all 600px
+		     wide, heights vary, so the width is fluid and the height is left to
+		     the image — never cropped to a fixed box. -->
 		<img
 			src={coverUrl(book.bookid)}
 			alt={book.title}
-			class="border-rule w-full border object-cover grayscale"
+			class="border-rule w-full border"
+			decoding="async"
 		/>
 		{#if book.location}
 			<figcaption class="text-ink-faint mt-2 text-center font-mono text-xs">
