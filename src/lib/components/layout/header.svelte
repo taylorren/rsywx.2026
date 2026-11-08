@@ -56,7 +56,7 @@
 						href={link.href}
 						aria-current={isActive(link.href) ? 'page' : undefined}
 						class={cn(
-							'hover:text-spot border-b-2 border-transparent py-3 text-sm tracking-[0.14em] transition-colors',
+							'hover:text-spot inline-flex items-center border-b-2 border-transparent pt-[13px] pb-[11px] text-sm tracking-[0.14em] transition-colors',
 							isActive(link.href) && 'border-spot text-spot'
 						)}
 					>
@@ -72,7 +72,7 @@
 						target="_blank"
 						rel="noopener noreferrer"
 						title="在新窗口打开"
-						class="hover:text-spot inline-flex items-center gap-1 border-b-2 border-transparent py-3 text-sm tracking-[0.14em] transition-colors"
+						class="hover:text-spot inline-flex items-center gap-1 border-b-2 border-transparent pt-[13px] pb-[11px] text-sm tracking-[0.14em] transition-colors"
 					>
 						{link.label}
 						<ExternalLink class="text-ink-faint size-3" aria-hidden="true" />
@@ -83,7 +83,7 @@
 			<li>
 				<a
 					href={siteConfig.links.contact}
-					class="text-spot hover:border-spot border-b-2 border-transparent py-3 text-sm tracking-[0.14em] transition-colors"
+					class="text-spot hover:border-spot inline-flex items-center border-b-2 border-transparent pt-[13px] pb-[11px] text-sm tracking-[0.14em] transition-colors"
 				>
 					联系站长
 				</a>
