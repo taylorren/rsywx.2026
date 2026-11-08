@@ -53,6 +53,24 @@ export const siteConfig = {
 		{ href: 'https://rsywx.com', label: '维客' }
 	],
 
+	/** The few ways to reach the keeper of the house, printed on /contact. */
+	social: [
+		{
+			label: '邮箱',
+			handle: 'taylor.ren@gmail.com',
+			href: 'mailto:taylor.ren@gmail.com',
+			external: false
+		},
+		{ label: 'X', handle: '@taylorren', href: 'https://x.com/taylorren', external: true },
+		{
+			label: 'Facebook',
+			handle: 'taylor.ren',
+			href: 'https://facebook.com/taylor.ren',
+			external: true
+		},
+		{ label: 'GitHub', handle: 'taylorren', href: 'https://github.com/taylorren', external: true }
+	],
+
 	/** External destinations used by the navigation. */
 	links: {
 		blog: 'https://blog.rsywx.net',
