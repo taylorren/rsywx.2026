@@ -53,11 +53,12 @@
 			<button
 				type="button"
 				onclick={() => (type = t.value)}
+				aria-pressed={type === t.value}
 				class={cn(
-					'border-b-2 pb-1 text-sm transition-colors',
+					'px-2.5 py-1 text-sm transition-colors',
 					type === t.value
-						? 'border-spot text-spot'
-						: 'text-ink-soft hover:text-ink border-transparent'
+						? 'bg-spot text-paper font-semibold'
+						: 'text-ink-soft hover:text-ink hover:bg-accent/60'
 				)}
 			>
 				{t.label}
