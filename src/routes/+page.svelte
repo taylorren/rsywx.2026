@@ -10,6 +10,7 @@
 	import NewsBriefs from '#lib/components/home/news-briefs.svelte';
 	import ReviewColumn from '#lib/components/home/review-column.svelte';
 	import TodayColumn from '#lib/components/home/today-column.svelte';
+	import WeatherBox from '#lib/components/home/weather-box.svelte';
 	import { byReviewDateDesc, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
@@ -78,16 +79,18 @@
 	</div>
 
 	<aside class="border-rule space-y-6 lg:col-span-4 lg:border-l lg:pl-10">
+		<WeatherBox weather={data.weather.data} error={data.weather.error} />
+
+		<Box head="藏书统计" meta={data.dateline.dateLabel}>
+			<LibraryLedger stats={data.status.data} error={data.status.error} />
+		</Box>
+
 		<Box head="书讯">
 			<NewsBriefs
 				latest={data.latest.data?.[0] ?? null}
 				visited={data.lastVisited.data?.[0] ?? null}
 				error={data.latest.error}
 			/>
-		</Box>
-
-		<Box head="藏书统计" meta={data.dateline.dateLabel}>
-			<LibraryLedger stats={data.status.data} error={data.status.error} />
 		</Box>
 
 		<DailyBoxes

@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import {
 	getBlogsToday,
+	getCurrentWeather,
 	getLastVisited,
 	getLatestBooks,
 	getLatestReadings,
@@ -43,18 +44,29 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 	const today = dateline();
 	const plate = byIssue(siteConfig.frontPage, today.issue);
 
-	const [status, latest, lastVisited, random, readingSummary, latestReading, wotd, qotd, blogs] =
-		await Promise.all([
-			settle(getStatus(fetch)),
-			settle(getLatestBooks(fetch, 1)),
-			settle(getLastVisited(fetch, 1)),
-			settle(getRandomBooks(fetch, 8)), // fetch extra so the widget can drop the featured (新入库 / 最近浏览) books
-			settle(getReadingSummary(fetch)),
-			settle(getLatestReadings(fetch, 8)), // printed as 3 + 5 in two index blocks
-			settle(getWordOfTheDay(fetch)),
-			settle(getQuoteOfTheDay(fetch)),
-			settle(getBlogsToday(fetch))
-		]);
+	const [
+		status,
+		latest,
+		lastVisited,
+		random,
+		readingSummary,
+		latestReading,
+		wotd,
+		qotd,
+		weather,
+		blogs
+	] = await Promise.all([
+		settle(getStatus(fetch)),
+		settle(getLatestBooks(fetch, 1)),
+		settle(getLastVisited(fetch, 1)),
+		settle(getRandomBooks(fetch, 8)), // fetch extra so the widget can drop the featured (新入库 / 最近浏览) books
+		settle(getReadingSummary(fetch)),
+		settle(getLatestReadings(fetch, 8)), // lead + 其他书评 index, one block
+		settle(getWordOfTheDay(fetch)),
+		settle(getQuoteOfTheDay(fetch)),
+		settle(getCurrentWeather(fetch)),
+		settle(getBlogsToday(fetch))
+	]);
 
 	return {
 		dateline: today,
@@ -68,6 +80,7 @@ export const load: PageServerLoad = async ({ fetch, setHeaders }) => {
 		latestReading,
 		wotd,
 		qotd,
+		weather,
 		blogs
 	};
 };

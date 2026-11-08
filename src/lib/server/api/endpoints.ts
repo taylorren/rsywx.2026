@@ -4,6 +4,7 @@ import type {
 	BlogPost,
 	BookDetail,
 	BookListItem,
+	CurrentWeather,
 	LibraryStats,
 	QuoteOfTheDay,
 	Reading,
@@ -66,6 +67,9 @@ export const getWordOfTheDay = (f: Fetch, o?: ApiFetchOptions) =>
 
 export const getQuoteOfTheDay = (f: Fetch, o?: ApiFetchOptions) =>
 	apiFetch<QuoteOfTheDay>(f, '/misc/qotd', o);
+
+export const getCurrentWeather = (f: Fetch, o?: ApiFetchOptions) =>
+	apiFetch<CurrentWeather>(f, '/misc/weather/current', o);
 
 /* ------------------------------------------------------------------ Blog */
 

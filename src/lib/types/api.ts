@@ -118,6 +118,23 @@ export interface QuoteOfTheDay {
 	source: string;
 }
 
+/** Live weather for the station the backend polls (`/misc/weather/current`). */
+export interface CurrentWeather {
+	location: string;
+	temperature: string;
+	feels_like: string;
+	condition: string;
+	condition_code: string;
+	humidity: string;
+	pressure: string;
+	visibility: string;
+	wind_direction: string;
+	wind_speed: string;
+	wind_scale: string;
+	update_time: string;
+	api_response_code: string;
+}
+
 /* ------------------------------------------------------------------ Blog */
 
 export interface BlogPost {
