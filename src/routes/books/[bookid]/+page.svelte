@@ -143,8 +143,8 @@
 </div>
 
 {#if book.intro}
-	<section class="border-rule mt-10 border-t pt-6">
-		<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">简介</h2>
+	<section class="mt-10">
+		<SectionHead kicker="藏书" title="简介" />
 		<div
 			class={cn(
 				'mt-3 text-[0.9375rem] leading-[1.9] [&>p+p]:mt-2',

@@ -24,7 +24,7 @@
 	<div class="flex items-end justify-between gap-4">
 		<div class="min-w-0">
 			{#if kicker}
-				<p class="kicker text-spot font-mono text-[0.6875rem] font-semibold">{kicker}</p>
+				<p class="kicker text-spot font-mono text-xs font-semibold">{kicker}</p>
 			{/if}
 			<h1 class="font-display mt-1 text-4xl font-bold tracking-wide sm:text-5xl">{title}</h1>
 			{#if standfirst}

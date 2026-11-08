@@ -40,7 +40,7 @@
 		</div>
 
 		<div>
-			<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">技术框架</h2>
+			<h2 class="kicker text-ink-faint font-mono text-xs">技术框架</h2>
 			<ul class="text-ink-soft mt-2 space-y-1 text-xs">
 				<li>
 					前端
@@ -73,7 +73,7 @@
 		</div>
 
 		<div>
-			<h2 class="kicker text-ink-faint font-mono text-[0.6875rem]">家庭成员</h2>
+			<h2 class="kicker text-ink-faint font-mono text-xs">家庭成员</h2>
 			<ul class="mt-2 flex flex-wrap items-start gap-3">
 				{#each family as member (member.file)}
 					<li>
