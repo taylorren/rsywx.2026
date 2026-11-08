@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Seo from '#lib/components/seo.svelte';
 	import { coverUrl } from '#lib/config/media';
+	import { formatDecimal, formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -17,9 +18,9 @@
 				['分类', book.category],
 				['版次', book.ver],
 				['装帧', book.deco],
-				['页数', book.page?.toString()],
-				['千字', book.kword?.toString()],
-				['定价', book.price != null ? `${book.price}` : null],
+				['页数', book.page != null ? formatInt(book.page) : null],
+				['千字', book.kword != null ? formatInt(book.kword) : null],
+				['定价', book.price != null ? formatDecimal(book.price) : null],
 				['购买日期', book.purchdate],
 				['出版日期', book.pubdate],
 				['藏书位置', book.location],
@@ -53,7 +54,7 @@
 		<p class="text-muted-foreground mt-2">{book.author}</p>
 		{#if book.total_visits != null}
 			<p class="text-muted-foreground mt-1 text-sm">
-				访问 {book.total_visits}{#if book.last_visited}
+				访问 {formatInt(book.total_visits)}{#if book.last_visited}
 					· 最近 {book.last_visited}{/if}
 			</p>
 		{/if}

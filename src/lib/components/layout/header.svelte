@@ -65,6 +65,12 @@
 				维客
 				<ExternalLink class="size-3.5 opacity-70" aria-hidden="true" />
 			</a>
+			<a
+				href={siteConfig.links.contact}
+				class="rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-amber-950 shadow-sm transition-colors hover:bg-amber-400"
+			>
+				联系站长
+			</a>
 		</div>
 
 		<div class="flex items-center gap-2">
@@ -122,6 +128,12 @@
 				>
 					维客
 					<ExternalLink class="size-4 opacity-70" aria-hidden="true" />
+				</a>
+				<a
+					href={siteConfig.links.contact}
+					class="mt-1 flex items-center justify-center rounded-md bg-amber-500 px-3 py-2 text-base font-semibold text-amber-950 shadow-sm transition-colors hover:bg-amber-400"
+				>
+					联系站长
 				</a>
 			</div>
 		</div>

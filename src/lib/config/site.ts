@@ -10,6 +10,7 @@ export const siteConfig = {
 	/** External destinations used by the navigation. */
 	links: {
 		blog: 'https://blog.rsywx.net',
-		wiki: 'https://rsywx.com'
+		wiki: 'https://rsywx.com',
+		contact: '/contact'
 	}
 } as const;

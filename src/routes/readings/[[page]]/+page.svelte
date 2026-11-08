@@ -2,6 +2,7 @@
 	import Seo from '#lib/components/seo.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
 	import StatTile from '#lib/components/stat-tile.svelte';
+	import { formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -11,9 +12,9 @@
 	const summaryTiles = $derived(
 		data.summary
 			? [
-					{ label: '已读书籍', value: data.summary.books_read.toLocaleString() },
-					{ label: '读书笔记', value: data.summary.reviews_written.toLocaleString() },
-					{ label: '读书天数', value: data.summary.reading_period.total_days.toLocaleString() }
+					{ label: '已读书籍', value: formatInt(data.summary.books_read) },
+					{ label: '读书笔记', value: formatInt(data.summary.reviews_written) },
+					{ label: '读书天数', value: formatInt(data.summary.reading_period.total_days) }
 				]
 			: []
 	);

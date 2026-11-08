@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { coverUrl } from '#lib/config/media';
-	import { cn } from '#lib/utils';
+	import { bookByline, cn, formatInt } from '#lib/utils';
 	import type { BookListItem } from '#lib/types/api';
 
 	interface Props {
@@ -29,9 +29,9 @@
 	</div>
 	<div class="mt-2 space-y-0.5">
 		<div class="line-clamp-1 text-sm font-medium" title={book.title}>{book.title}</div>
-		<div class="text-muted-foreground line-clamp-1 text-xs">{book.author}</div>
+		<div class="text-muted-foreground line-clamp-1 text-xs">{bookByline(book)}</div>
 		{#if visits != null}
-			<div class="text-muted-foreground text-xs">访问 {visits}</div>
+			<div class="text-muted-foreground text-xs">访问 {formatInt(visits)}</div>
 		{/if}
 	</div>
 </a>

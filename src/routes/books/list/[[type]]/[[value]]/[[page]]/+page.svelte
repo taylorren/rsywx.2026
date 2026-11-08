@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { Search } from '@lucide/svelte';
 	import { untrack } from 'svelte';
 	import Seo from '#lib/components/seo.svelte';
 	import BookCard from '#lib/components/book-card.svelte';
 	import Pagination from '#lib/components/pagination.svelte';
 	import { Button } from '#lib/components/ui/button';
+	import { formatInt } from '#lib/utils';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -57,12 +59,13 @@
 		placeholder="输入检索词…"
 		class="bg-background h-9 flex-1 rounded-md border px-3 text-sm outline-none focus-visible:ring-2"
 	/>
-	<Button type="submit">搜索</Button>
+	<Button type="submit"><Search class="size-4" />搜索</Button>
 </form>
 
 <div class="text-muted-foreground mt-4 text-sm">
-	{data.displayValue ? `“${data.displayValue}” 的检索结果：` : ''}共 {data.pagination.total_results} 条
-	· 第 {data.pagination.current_page} / {data.pagination.total_pages} 页
+	{data.displayValue ? `“${data.displayValue}” 的检索结果：` : ''}共 {formatInt(
+		data.pagination.total_results
+	)} 条 · 第 {data.pagination.current_page} / {data.pagination.total_pages} 页
 </div>
 
 {#if data.books.length}
