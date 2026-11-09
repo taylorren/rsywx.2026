@@ -9,6 +9,8 @@ import type {
 	QuoteOfTheDay,
 	Reading,
 	ReadingSummary,
+	VisitDay,
+	VisitHistoryResponse,
 	WordOfTheDay
 } from '#lib/types/api';
 
@@ -41,6 +43,17 @@ export const getPopular = (f: Fetch, count: number, o?: ApiFetchOptions) =>
 
 export const getUnpopular = (f: Fetch, count: number, o?: ApiFetchOptions) =>
 	apiFetch<BookListItem[]>(f, `/books/unpopular/${count}`, o);
+
+/**
+ * Daily visit counts plus the window total, newest last. One call powers the
+ * whole /books/visits page: the backend clamps `days` to 1–365 and fills gaps
+ * with zeroes, so a single `days=180` series yields 今日 / 七日 / 一月 / 半年.
+ */
+export const getVisitHistory = (f: Fetch, days = 30, o?: ApiFetchOptions) =>
+	apiFetch<VisitDay[], VisitHistoryResponse>(f, '/books/visit_history', {
+		...o,
+		params: { days, ...o?.params }
+	});
 
 /**
  * Search & list. `value` is the catch-all search term; the page is a trailing

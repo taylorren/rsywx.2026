@@ -24,6 +24,12 @@ The SvelteKit frontend for the RSYWX personal library / blog, consuming the
 - **Visits are recorded separately** from reads: the detail page loads
   read-only and the client records a visit via `POST /api/visit/[bookid]`, so
   hover-preloads and refreshes don't inflate counts (backend INT-03).
+- **`/books/visits` (阅览记录)** derives 今日 / 近七日 / 近一月 / 近半年 from a
+  single `/books/visit_history?days=180` call — the API has no per-window
+  totals. `last_visited` is deduped by `bookid` on the server because that
+  endpoint returns **one row per visit**, not per book. The 30-day chart is a
+  plain server-rendered SVG (weekends in the spot colour), so the page needs no
+  chart library and no client JS.
 - **Covers** are served by this app from `/covers/{bookid}.webp` (600px wide,
   WebP q90 re-encoded from the JPEG originals — same dimensions, ~71% fewer bytes).
 - **Front-page plates** (`static/images/{hannibal,hilbert,keynes}.webp`) are WebP q90
@@ -97,5 +103,6 @@ http://localhost:5173/og-preview?url=/books/00001.html
 
 - **T0 (foundation):** done — env, API layer, theming, layout, SEO, tooling.
 - **T1 (core):** done — Home, Book detail, Search/List, Readings.
-- **T2 (next):** book discovery pages (random / today / popular / unpopular /
-  forgotten / last_visited / visits), blog pages, weather widget.
+- **T2 (next):** book discovery pages — `/books/visits` (阅览记录: totals, trend,
+  hot / cold / recent / forgotten) done; remaining: random / today / popular /
+  unpopular / forgotten / last_visited standalone pages, blog pages, weather widget.

@@ -42,7 +42,16 @@
 	title={data.displayValue ? `检索「${data.displayValue}」` : '藏书总目'}
 	standfirst="按书名、著者、标签或其他字段检索全部藏书。"
 	meta={`共 ${formatInt(data.pagination.total_results)} 册 · 第 ${data.pagination.current_page} / ${data.pagination.total_pages} 页`}
-/>
+>
+	{#snippet action()}
+		<a
+			href="/books/visits"
+			class="text-spot hover:border-spot border-b border-transparent font-mono text-xs transition-colors"
+		>
+			阅览记录 →
+		</a>
+	{/snippet}
+</PageHead>
 
 <form
 	onsubmit={submit}

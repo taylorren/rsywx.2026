@@ -27,6 +27,40 @@ export interface LibraryStats {
 	total_visits: number;
 }
 
+/* --------------------------------------------------------------- Visits */
+
+/** One day of the visit log (`/books/visit_history`). */
+export interface VisitDay {
+	/** Calendar day, `YYYY-MM-DD` (backend timezone). */
+	date: string;
+	visit_count: number;
+	/** English weekday name the backend derives from the date. */
+	day_of_week: string;
+}
+
+/** The window a `visit_history` call covers. */
+export interface VisitPeriodInfo {
+	start_date: string;
+	end_date: string;
+	total_days: number;
+	total_visits: number;
+}
+
+export interface VisitHistoryResponse extends ApiResponse<VisitDay[]> {
+	period_info?: VisitPeriodInfo;
+}
+
+/**
+ * One of the four printed totals on /books/visits. Derived on the server from a
+ * single 180-day `visit_history` call — the API has no per-window totals.
+ */
+export interface VisitWindow {
+	key: string;
+	label: string;
+	days: number;
+	visits: number;
+}
+
 /** Embedded review on a book detail (minimal schema — its own image + link). */
 export interface BookReview {
 	id: number;

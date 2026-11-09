@@ -87,6 +87,9 @@
 		<WeatherBox weather={data.weather.data} error={data.weather.error} />
 
 		<Box head="藏书统计" meta={data.dateline.dateLabel}>
+			{#snippet action()}
+				<a href="/books/visits" class="text-spot hover:underline">阅览 →</a>
+			{/snippet}
 			<LibraryLedger stats={data.status.data} error={data.status.error} />
 		</Box>
 

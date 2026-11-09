@@ -44,6 +44,7 @@ export const siteConfig = {
 	nav: [
 		{ href: '/', label: '首页' },
 		{ href: '/books/list', label: '藏书' },
+		{ href: '/books/visits', label: '阅览' },
 		{ href: '/readings', label: '读书' }
 	],
 

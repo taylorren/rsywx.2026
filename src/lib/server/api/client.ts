@@ -45,12 +45,16 @@ export function buildApiUrl(endpoint: string, params?: ApiFetchOptions['params']
  * Server-side API call. Injects the API key, unwraps nothing (returns the
  * `{success, data, cached}` envelope) and throws `ApiError` on non-2xx so a
  * failure is never mistaken for empty data.
+ *
+ * `R` types the envelope of endpoints that carry extra top-level fields
+ * (`period_info`, `date_info`, …), which `ApiResponse` only exposes through its
+ * index signature.
  */
-export async function apiFetch<T>(
+export async function apiFetch<T, R extends ApiResponse<T> = ApiResponse<T>>(
 	fetchFn: Fetch,
 	endpoint: string,
 	options: ApiFetchOptions = {}
-): Promise<ApiResponse<T>> {
+): Promise<R> {
 	const params = { ...options.params };
 	if (options.refresh) params.refresh = true;
 
@@ -96,5 +100,5 @@ export async function apiFetch<T>(
 		throw new ApiError(502, 'Malformed API response');
 	}
 
-	return body as ApiResponse<T>;
+	return body as R;
 }
