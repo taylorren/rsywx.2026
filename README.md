@@ -99,6 +99,36 @@ http://localhost:5173/og-preview?url=/books/00001.html
 | `pnpm run lint`    | Prettier check + ESLint            |
 | `pnpm run format`  | Prettier write                     |
 
+## Deployment
+
+Production is a Node server on the VPS, not a static drop:
+
+- **Live tree:** `/home/tr/www/rsywx.net` — the only directory that serves
+  traffic. Sibling `*.old-*` trees are kept backups; never deploy into them.
+- **Process:** PM2 app `rsywx-svelte` (`node build/index.js`) on port 3000,
+  with nginx in front of `https://rsywx.net`.
+- **Runtime env:** set in `ecosystem.config.cjs` on the server (not `.env`),
+  pointing at `https://api.rsywx.com/api/v1`. That API is the **current**
+  backend — all 26 documented paths live there (the same contract as the
+  backend repository's `docs/API.md`), so `/blogs/*`, `/books/visit_history`
+  and `POST /admin/cache/clear` work in production too. Only `cover_uri` is
+  ignored: covers are served by this app (see INT-05).
+- **Deploy:** build locally, stage the output, swap atomically, restart.
+  Nothing is overwritten in place while the app is serving:
+
+```bash
+pnpm run build
+rsync -a --delete build/ prod:/home/tr/www/rsywx.net/build.new/
+ssh prod 'cd /home/tr/www/rsywx.net && \
+  mv build build.prev-$(date +%Y%m%d-%H%M%S) && \
+  mv build.new build && \
+  ~/.nvm/versions/node/v24.13.0/bin/pm2 restart rsywx-svelte'
+```
+
+`prod` is the operator's SSH alias. Dependencies live in the server's
+`node_modules`; only run `npm ci --omit=dev` there when `package.json` changes.
+Rollback = move `build.prev-*` back into place and restart the PM2 app.
+
 ## Status
 
 - **T0 (foundation):** done — env, API layer, theming, layout, SEO, tooling.
